@@ -1,5 +1,7 @@
 import type ImagesFromGist from "../main";
-import { PluginSettingTab, Setting, type App } from "obsidian";
+import { Notice, PluginSettingTab, Setting, type App } from "obsidian";
+
+import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
 export type ImagesFromGistSettings = {
 	showConfirmationModal: boolean;
@@ -14,7 +16,10 @@ export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
 };
 
 // TODO: ADD instructions video url here
-const YT_VID_URL = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
+const ENV_VAR_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
+
+// TODO: ADD video url here
+const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
 export default class ImagesFromGistSettingsTab extends PluginSettingTab {
@@ -56,6 +61,56 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 				"✔ Github token loaded from environment variables."
 			);
 		}
+
+		new Setting(containerEl)
+			.setName("Server url")
+			.setDesc(this.getServerUrlDesc())
+			.addText((text) => {
+				text.setValue(this.plugin.settings.serverUrl);
+
+				text.onChange(async (val) => {
+					this.plugin.settings.serverUrl = val;
+					await this.plugin.saveSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Confirm before upload")
+			.setDesc(
+				"A dialog shown when you add an image which lets you choose whether you want to upload the image or keep it local."
+			)
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.showConfirmationModal);
+
+				toggle.onChange(async (val) => {
+					this.plugin.settings.showConfirmationModal = val;
+					await this.plugin.saveSettings();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName("Reset!")
+			.setDesc(
+				"Reset to default settings. Doesn't affect github token environment variable."
+			)
+			.addButton((btn) => {
+				btn.setIcon("rotate-ccw");
+				btn.setCta();
+				btn.setTooltip("Reset");
+
+				btn.onClick(async (e) => {
+					this.plugin.settings.serverUrl =
+						DEFAULT_SETTINGS.serverUrl as string;
+
+					this.plugin.settings.showConfirmationModal = true;
+
+					this.plugin.settings.githubToken = "";
+
+					await this.plugin.saveSettings();
+
+					new Notice("✔ Reopen settings to see changes.", 2 * 1000);
+				});
+			});
 	}
 
 	private getNoTokenBannerDesc() {
@@ -65,16 +120,31 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 			"Github token entered here won't be saved because of security reasons. Use environment variables."
 		);
 
-		fragment.append(document.createElement("br"));
+		appendBrToFragment(fragment);
 
-		const a = document.createElement("a");
+		appendAnchorToFragment(
+			fragment,
+			"Learn how to add github token as an environment variable.",
+			ENV_VAR_VID
+		);
 
-		a.textContent =
-			"Learn how to add github token as an environment variable.";
+		return fragment;
+	}
 
-		a.setAttribute("href", YT_VID_URL);
+	private getServerUrlDesc() {
+		const fragment = document.createDocumentFragment();
 
-		fragment.append(a);
+		fragment.append(
+			"Continue to use the default server (completely private & absolutely free) or provide your own."
+		);
+
+		appendBrToFragment(fragment);
+
+		appendAnchorToFragment(
+			fragment,
+			"Learn what server url does",
+			SERVER_URL_VID
+		);
 
 		return fragment;
 	}
