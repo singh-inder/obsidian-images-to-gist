@@ -47,6 +47,8 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 				.setName("❌ Github token environment variable not found")
 				.setDesc(this.getNoTokenBannerDesc())
 				.addText((text) => {
+					text.inputEl.setAttribute("type", "password");
+
 					text.setPlaceholder("Enter Github token");
 
 					text.setValue(this.plugin.settings.githubToken || "");
