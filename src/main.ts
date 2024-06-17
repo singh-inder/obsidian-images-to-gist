@@ -1,17 +1,10 @@
 import { FileSystemAdapter, Notice, Plugin, normalizePath } from "obsidian";
 import * as dotenv from "dotenv";
 
-type ImagesFromGistSettings = {
-	showConfirmationModal: boolean;
-	githubToken?: string;
-	serverUrl: string;
-};
-
-const DEFAULT_SETTINGS: ImagesFromGistSettings = {
-	// TODO: update default server url to be deployed server domain
-	serverUrl: "http://localhost:5000",
-	showConfirmationModal: true
-};
+import ImagesFromGistSettingsTab, {
+	DEFAULT_SETTINGS,
+	type ImagesFromGistSettings
+} from "./ui/ImagesFromGistSettingsTab";
 
 export default class ImagesFromGist extends Plugin {
 	pluginName = "images-from-gist";
@@ -62,6 +55,9 @@ export default class ImagesFromGist extends Plugin {
 		await this.loadSettings();
 
 		this.loadEnvVars();
+
+		// This adds a settings tab so the user can configure various aspects of the plugin
+		this.addSettingTab(new ImagesFromGistSettingsTab(this.app, this));
 	}
 
 	onunload() {}
