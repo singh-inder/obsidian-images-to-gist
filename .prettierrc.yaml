@@ -1,0 +1,11 @@
+# Some settings are automatically inherited from .editorconfig
+semi: true
+trailingComma: none
+singleQuote: false
+overrides:
+    - files: ".editorconfig"
+      options:
+          parser: yaml
+    - files: "LICENSE"
+      options:
+          parser: markdown
