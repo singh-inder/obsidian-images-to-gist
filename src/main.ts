@@ -135,30 +135,31 @@ export default class ImagesFromGist extends Plugin {
     e.preventDefault();
 
     if (this.settings.showConfirmationModal) {
-      const modal = new UploadConfirmationModal(this.app, result => {
-        switch (result) {
-          case "alwaysUpload":
-            {
-              this.settings.showConfirmationModal = false;
-              this.saveSettings();
-            }
-            break;
-
-          case "upload":
-            break;
-
-          case "local": {
-            return markdownView.currentMode.clipboardManager.handlePaste(
-              new PasteEventCopy(e)
-            );
-          }
-
-          default:
-            return;
-        }
-      });
-
+      const modal = new UploadConfirmationModal(this.app);
       modal.open();
+
+      const result = await modal.waitForResponse();
+
+      switch (result) {
+        case "alwaysUpload":
+          {
+            this.settings.showConfirmationModal = false;
+            this.saveSettings();
+          }
+          break;
+
+        case "upload":
+          break;
+
+        case "local": {
+          return markdownView.currentMode.clipboardManager.handlePaste(
+            new PasteEventCopy(e)
+          );
+        }
+
+        default:
+          return;
+      }
     }
 
     for (let i = 0; i < files.length; i++) {

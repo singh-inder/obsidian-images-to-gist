@@ -4,22 +4,30 @@ const results = ["upload", "alwaysUpload", "local"] as const;
 
 type Result = (typeof results)[number];
 
-type onSubmitCb = (result?: Result) => void;
-
 export default class UploadConfirmationModal extends Modal {
-  result: Result;
-  userResponded = false;
-  onSubmit: onSubmitCb;
+  private userResponded = false;
 
-  constructor(app: App, onSubmit: onSubmitCb) {
+  // https://stackoverflow.com/a/77808165
+  private localPromise: Promise<Result | undefined>;
+  private localResolve: (result?: Result) => void;
+  // private localReject: (error: Error) => void;
+
+  constructor(app: App) {
     super(app);
 
-    this.onSubmit = onSubmit;
+    this.localPromise = new Promise((res, rej) => {
+      this.localResolve = res;
+      // this.localReject = rej;
+    });
   }
 
-  respond(result: Result) {
+  waitForResponse() {
+    return this.localPromise;
+  }
+
+  private respond(result: Result) {
     this.userResponded = true;
-    this.onSubmit(result);
+    this.localResolve(result);
     this.close();
   }
 
@@ -52,6 +60,6 @@ export default class UploadConfirmationModal extends Modal {
   onClose() {
     [this.contentEl, this.titleEl].forEach(el => el.empty());
 
-    if (!this.userResponded) this.onSubmit();
+    if (!this.userResponded) this.localResolve();
   }
 }
