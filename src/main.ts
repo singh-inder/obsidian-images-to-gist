@@ -11,26 +11,20 @@ export default class ImagesFromGist extends Plugin {
 
 	settings: ImagesFromGistSettings;
 
-	private noGithubTokenNotice(addToStatusBar: boolean = false) {
-		const errText = "❌ No Github token";
-		new Notice(errText, 3 * 1000);
-
-		if (addToStatusBar) this.addStatusBarItem().setText(errText);
+	private noGithubTokenNotice() {
+		new Notice("❌ No Github token", 3 * 1000);
 	}
 
-	private noServerUrlNotice(addToStatusBar: boolean = false) {
-		const errText = "❌ No Server url";
-		new Notice(errText, 3 * 1000);
-
-		if (addToStatusBar) this.addStatusBarItem().setText(errText);
+	private noServerUrlNotice() {
+		new Notice("❌ No Server url", 3 * 1000);
 	}
 
-	private getPluginPath() {
+	getPluginPath() {
 		return `${this.app.vault.configDir}/plugins/${this.pluginName}`;
 	}
 
 	// https://forum.obsidian.md/t/how-to-get-current-plugins-directory/26427/2
-	private getAbsolutePath(fileName: string) {
+	getAbsolutePath(fileName: string) {
 		let basePath;
 
 		if (this.app.vault.adapter instanceof FileSystemAdapter) {
@@ -46,13 +40,7 @@ export default class ImagesFromGist extends Plugin {
 	}
 
 	getToken() {
-		const token = process.env.GITHUB_TOKEN || this.settings.githubToken;
-
-		const loadedFrom: "env" | "settings" = process.env.GITHUB_TOKEN
-			? "env"
-			: "settings";
-
-		return token ? { token, loadedFrom } : null;
+		return process.env.GITHUB_TOKEN || this.settings.githubToken;
 	}
 
 	loadEnvVars() {
@@ -65,8 +53,8 @@ export default class ImagesFromGist extends Plugin {
 
 		this.loadEnvVars();
 
-		if (!this.getToken()) this.noGithubTokenNotice(true);
-		if (!this.settings.serverUrl) this.noServerUrlNotice(true);
+		if (!this.getToken()) this.noGithubTokenNotice();
+		if (!this.settings.serverUrl) this.noServerUrlNotice();
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new ImagesFromGistSettingsTab(this.app, this));

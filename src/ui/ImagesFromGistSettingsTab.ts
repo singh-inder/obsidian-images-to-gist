@@ -17,9 +17,6 @@ export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
 	addRandomId: true
 };
 
-// TODO: ADD instructions video url here
-const ENV_VAR_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
-
 // TODO: ADD video url here
 const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 
@@ -42,29 +39,43 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 			.setName("Images From Gist Plugin - Settings")
 			.setHeading();
 
-		const tokenData = this.plugin.getToken();
+		const token = this.plugin.getToken();
 
-		if (!tokenData || tokenData.loadedFrom === "settings") {
-			new Setting(containerEl)
-				.setName("❌ Github token environment variable not found")
-				.setDesc(this.getNoTokenBannerDesc())
-				.addText((text) => {
-					text.inputEl.setAttribute("type", "password");
+		new Setting(containerEl)
+			.setName("Github token")
+			.setDesc(this.githubTokenSettingDesc())
+			.addText((text) => {
+				text.inputEl.setAttribute("type", "password");
 
-					text.setPlaceholder("Enter Github token");
+				text.setPlaceholder("Enter Github token");
 
-					text.setValue(this.plugin.settings.githubToken || "");
+				text.setValue(token || "");
 
-					text.onChange((val) => {
-						// NOT CALLING this.plugin.saveSettings function as githubToken entered in input should not be persisted.
-						this.plugin.settings.githubToken = val;
-					});
+				text.onChange(async (val) => {
+					this.plugin.settings.githubToken = val;
+
+					try {
+						// console.log(this.app)
+						const adapter = this.app.vault.adapter;
+
+						const envFilePath = `${this.plugin.getPluginPath()}/.env`;
+						const envFileExists = await adapter.exists(envFilePath);
+
+						const envValue = `GITHUB_TOKEN=${val}`;
+
+						if (envFileExists) {
+							// https://docs.obsidian.md/Plugins/Vault#Modify+files
+							await adapter.process(envFilePath, (fileData) => {
+								return envValue;
+							});
+						} else {
+							await adapter.write(envFilePath, envValue);
+						}
+					} catch (error) {
+						console.error(error);
+					}
 				});
-		} else {
-			new Setting(containerEl).setName(
-				"✔ Github token loaded from environment variables."
-			);
-		}
+			});
 
 		new Setting(containerEl)
 			.setName("Server url")
@@ -109,19 +120,21 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 			});
 	}
 
-	private getNoTokenBannerDesc() {
+	private githubTokenSettingDesc() {
 		const fragment = document.createDocumentFragment();
 
-		fragment.append(
-			"Github token entered here won't be saved because of security reasons. Use environment variables."
-		);
+		fragment.append("Token is saved in ");
+
+		const span = document.createElement("span");
+		span.style.fontWeight = "500";
+		span.textContent = this.plugin.getAbsolutePath(".env");
+
+		fragment.append(span);
 
 		appendBrToFragment(fragment);
 
-		appendAnchorToFragment(
-			fragment,
-			"Learn how to add github token as an environment variable.",
-			ENV_VAR_VID
+		fragment.append(
+			"If you use any sync service, make sure to exclude this file."
 		);
 
 		return fragment;
