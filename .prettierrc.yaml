@@ -3,3 +3,4 @@ semi: true
 trailingComma: none
 singleQuote: false
 arrowParens: avoid
+printWidth: 87

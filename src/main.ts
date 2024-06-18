@@ -13,8 +13,9 @@ import ImagesFromGistSettingsTab, {
   DEFAULT_SETTINGS,
   type ImagesFromGistSettings
 } from "./ui/ImagesFromGistSettingsTab";
+import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
-import { allFilesAreImages } from "./lib/utils";
+import { allFilesAreImages, createGist } from "./lib/utils";
 import { PasteEventCopy } from "./event-classes";
 
 declare module "obsidian" {
@@ -113,9 +114,7 @@ export default class ImagesFromGist extends Plugin {
   }
 
   private setupHandlers() {
-    this.registerEvent(
-      this.app.workspace.on("editor-paste", this.customPasteEventCb)
-    );
+    this.registerEvent(this.app.workspace.on("editor-paste", this.customPasteEventCb));
     // TODO: handle drag & drop event
   }
 
@@ -136,14 +135,35 @@ export default class ImagesFromGist extends Plugin {
     e.preventDefault();
 
     if (this.settings.showConfirmationModal) {
-      // TODO render a confirmation modal
+      const modal = new UploadConfirmationModal(this.app, result => {
+        switch (result) {
+          case "alwaysUpload":
+            {
+              this.settings.showConfirmationModal = false;
+              this.saveSettings();
+            }
+            break;
+
+          case "upload":
+            break;
+
+          case "local": {
+            return markdownView.currentMode.clipboardManager.handlePaste(
+              new PasteEventCopy(e)
+            );
+          }
+
+          default:
+            return;
+        }
+      });
+
+      modal.open();
     }
 
     for (let i = 0; i < files.length; i++) {
       this.createGistAndEmbedImage(files[i]).catch(() => {
-        markdownView.currentMode.clipboardManager.handlePaste(
-          new PasteEventCopy(e)
-        );
+        markdownView.currentMode.clipboardManager.handlePaste(new PasteEventCopy(e));
       });
     }
   };
@@ -166,8 +186,78 @@ export default class ImagesFromGist extends Plugin {
       fileName = `${splitFileName[0]}-${randomId}.${extension}`;
     }
 
-    console.log(fileName);
+    this.insertTemporaryText(fileName, atPos);
 
-    // TODO Make a POST request to github gist api
+    try {
+      const res = await createGist(file, fileName, token);
+
+      const imgUrl = `${serverUrl}?url=${res.files[fileName].raw_url}`;
+
+      const progressText = ImagesFromGist.progressTextFor(fileName);
+
+      const markDownImage = `![](${imgUrl})`;
+
+      const editor = this.getEditor();
+
+      if (editor)
+        ImagesFromGist.replaceFirstOccurrence(editor, progressText, markDownImage);
+    } catch (error) {
+      console.error(`Failed to create gist for ${fileName}: `, error);
+
+      this.handleFailedUpload(fileName, `⚠️failed to create gist, ${error.message}`);
+
+      throw error;
+    }
+  }
+
+  private handleFailedUpload(pasteId: string, message: string) {
+    const progressText = ImagesFromGist.progressTextFor(pasteId);
+
+    const editor = this.getEditor();
+
+    if (editor)
+      ImagesFromGist.replaceFirstOccurrence(editor, progressText, `<!--${message}-->`);
+  }
+
+  private static progressTextFor(id: string) {
+    return `![Uploading file...${id}]()`;
+  }
+
+  private insertTemporaryText(pasteId: string, atPos?: EditorPosition) {
+    const progressText = ImagesFromGist.progressTextFor(pasteId);
+
+    const replacement = `${progressText}\n`;
+
+    const editor = this.getEditor();
+    if (!editor) return;
+
+    if (atPos) {
+      editor.replaceRange(replacement, atPos, atPos);
+    } else {
+      editor.replaceSelection(replacement);
+    }
+  }
+
+  private getEditor() {
+    const mdView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    return mdView?.editor;
+  }
+
+  private static replaceFirstOccurrence(
+    editor: Editor,
+    target: string,
+    replacement: string
+  ) {
+    const lines = editor.getValue().split("\n");
+
+    for (let i = 0; i < lines.length; i += 1) {
+      const ch = lines[i].indexOf(target);
+      if (ch === -1) continue;
+
+      const from = { line: i, ch };
+      const to = { line: i, ch: ch + target.length };
+      editor.replaceRange(replacement, from, to);
+      break;
+    }
   }
 }

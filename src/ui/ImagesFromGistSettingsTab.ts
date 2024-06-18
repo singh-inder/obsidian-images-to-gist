@@ -144,9 +144,7 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 
     appendBrToFragment(fragment);
 
-    fragment.append(
-      "If you use any sync service, make sure to exclude this file."
-    );
+    fragment.append("If you use any sync service, make sure to exclude this file.");
 
     return fragment;
   }
@@ -160,11 +158,7 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 
     appendBrToFragment(fragment);
 
-    appendAnchorToFragment(
-      fragment,
-      "Learn what server url does",
-      SERVER_URL_VID
-    );
+    appendAnchorToFragment(fragment, "Learn what server url does", SERVER_URL_VID);
 
     return fragment;
   }
