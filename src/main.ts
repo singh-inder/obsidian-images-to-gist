@@ -1,5 +1,10 @@
-import { FileSystemAdapter, Notice, Plugin, normalizePath } from "obsidian";
-import * as dotenv from "dotenv";
+import {
+	Platform,
+	FileSystemAdapter,
+	Notice,
+	Plugin,
+	normalizePath
+} from "obsidian";
 
 import ImagesFromGistSettingsTab, {
 	DEFAULT_SETTINGS,
@@ -43,15 +48,16 @@ export default class ImagesFromGist extends Plugin {
 		return process.env.GITHUB_TOKEN || this.settings.githubToken;
 	}
 
-	loadEnvVars() {
+	async loadEnvVars() {
 		// https://levelup.gitconnected.com/obsidian-plugin-development-tutorial-how-to-use-environment-variables-d6f9258f3957
-		dotenv.config({ path: this.getAbsolutePath(".env") });
+		(await import("dotenv")).config({ path: this.getAbsolutePath(".env") });
 	}
 
 	async onload() {
 		await this.loadSettings();
 
-		this.loadEnvVars();
+		// dotenv internally uses nodejs apis which isn't supported on mobile platforms
+		if (!Platform.isMobile) await this.loadEnvVars();
 
 		if (!this.getToken()) this.noGithubTokenNotice();
 		if (!this.settings.serverUrl) this.noServerUrlNotice();
