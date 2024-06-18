@@ -4,17 +4,17 @@ import { Platform, PluginSettingTab, Setting, type App } from "obsidian";
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
 export type ImagesFromGistSettings = {
-	showConfirmationModal: boolean;
-	githubToken?: string;
-	serverUrl?: string;
-	addRandomId: boolean;
+  showConfirmationModal: boolean;
+  githubToken?: string;
+  serverUrl?: string;
+  addRandomId: boolean;
 };
 
 export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
-	// TODO: update default server url to be deployed server domain
-	serverUrl: "http://localhost:5000",
-	showConfirmationModal: true,
-	addRandomId: true
+  // TODO: update default server url to be deployed server domain
+  serverUrl: "http://localhost:5000",
+  showConfirmationModal: true,
+  addRandomId: true
 };
 
 // TODO: ADD video url here
@@ -22,150 +22,150 @@ const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
 export default class ImagesFromGistSettingsTab extends PluginSettingTab {
-	plugin: ImagesFromGist;
+  plugin: ImagesFromGist;
 
-	constructor(app: App, plugin: ImagesFromGist) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
+  constructor(app: App, plugin: ImagesFromGist) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
 
-	display(): void {
-		const { containerEl } = this;
+  display(): void {
+    const { containerEl } = this;
 
-		containerEl.empty();
+    containerEl.empty();
 
-		// https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60setHeading%60+instead+of+a+%60%3Ch1%3E%60%2C+%60%3Ch2%3E%60
-		new Setting(containerEl)
-			.setName("Images From Gist Plugin - Settings")
-			.setHeading();
+    // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60setHeading%60+instead+of+a+%60%3Ch1%3E%60%2C+%60%3Ch2%3E%60
+    new Setting(containerEl)
+      .setName("Images From Gist Plugin - Settings")
+      .setHeading();
 
-		const token = this.plugin.getToken();
+    const token = this.plugin.getToken();
 
-		new Setting(containerEl)
-			.setName("Github token")
-			.setDesc(this.githubTokenSettingDesc())
-			.addText((text) => {
-				text.inputEl.setAttribute("type", "password");
+    new Setting(containerEl)
+      .setName("Github token")
+      .setDesc(this.githubTokenSettingDesc())
+      .addText(text => {
+        text.inputEl.setAttribute("type", "password");
 
-				text.setPlaceholder("Enter Github token");
+        text.setPlaceholder("Enter Github token");
 
-				text.setValue(token || "");
+        text.setValue(token || "");
 
-				text.onChange(async (val) => {
-					this.plugin.settings.githubToken = val;
+        text.onChange(async val => {
+          this.plugin.settings.githubToken = val;
 
-					// early return mobile platform as dotenv cannot run on mobile platform.
-					if (Platform.isMobile) return;
+          // early return mobile platform as dotenv cannot run on mobile platform.
+          if (Platform.isMobile) return;
 
-					try {
-						// console.log(this.app)
-						const adapter = this.app.vault.adapter;
+          try {
+            // console.log(this.app)
+            const adapter = this.app.vault.adapter;
 
-						const envFilePath = `${this.plugin.getPluginPath()}/.env`;
-						const envFileExists = await adapter.exists(envFilePath);
+            const envFilePath = `${this.plugin.getPluginPath()}/.env`;
+            const envFileExists = await adapter.exists(envFilePath);
 
-						const envValue = `GITHUB_TOKEN=${val}`;
+            const envValue = `GITHUB_TOKEN=${val}`;
 
-						if (envFileExists) {
-							// https://docs.obsidian.md/Plugins/Vault#Modify+files
-							await adapter.process(envFilePath, (fileData) => {
-								return envValue;
-							});
-						} else {
-							await adapter.write(envFilePath, envValue);
-						}
-					} catch (error) {
-						console.error(error);
-					}
-				});
-			});
+            if (envFileExists) {
+              // https://docs.obsidian.md/Plugins/Vault#Modify+files
+              await adapter.process(envFilePath, fileData => {
+                return envValue;
+              });
+            } else {
+              await adapter.write(envFilePath, envValue);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+      });
 
-		new Setting(containerEl)
-			.setName("Server url")
-			.setDesc(this.getServerUrlDesc())
-			.addText((text) => {
-				text.setValue(this.plugin.settings.serverUrl || "");
+    new Setting(containerEl)
+      .setName("Server url")
+      .setDesc(this.getServerUrlDesc())
+      .addText(text => {
+        text.setValue(this.plugin.settings.serverUrl || "");
 
-				text.setPlaceholder(DEFAULT_SETTINGS.serverUrl as string);
+        text.setPlaceholder(DEFAULT_SETTINGS.serverUrl as string);
 
-				text.onChange(async (val) => {
-					this.plugin.settings.serverUrl = val;
-					await this.plugin.saveSettings();
-				});
-			});
+        text.onChange(async val => {
+          this.plugin.settings.serverUrl = val;
+          await this.plugin.saveSettings();
+        });
+      });
 
-		new Setting(containerEl)
-			.setName("Confirm before upload")
-			.setDesc(
-				"A dialog appears when you add an image, allowing you to choose between uploading the image or keeping it local."
-			)
-			.addToggle((toggle) => {
-				toggle.setValue(this.plugin.settings.showConfirmationModal);
+    new Setting(containerEl)
+      .setName("Confirm before upload")
+      .setDesc(
+        "A dialog appears when you add an image, allowing you to choose between uploading the image or keeping it local."
+      )
+      .addToggle(toggle => {
+        toggle.setValue(this.plugin.settings.showConfirmationModal);
 
-				toggle.onChange(async (val) => {
-					this.plugin.settings.showConfirmationModal = val;
-					await this.plugin.saveSettings();
-				});
-			});
+        toggle.onChange(async val => {
+          this.plugin.settings.showConfirmationModal = val;
+          await this.plugin.saveSettings();
+        });
+      });
 
-		new Setting(containerEl)
-			.setName("Add random id")
-			.setDesc(
-				"A random id will be added to the image gist title to ensure its uniqueness. (Enabling this feature is recommended.)"
-			)
-			.addToggle((toggle) => {
-				toggle.setValue(this.plugin.settings.addRandomId);
+    new Setting(containerEl)
+      .setName("Add random id")
+      .setDesc(
+        "A random id will be added to the image gist title to ensure its uniqueness. (Enabling this feature is recommended.)"
+      )
+      .addToggle(toggle => {
+        toggle.setValue(this.plugin.settings.addRandomId);
 
-				toggle.onChange(async (val) => {
-					this.plugin.settings.addRandomId = val;
-					await this.plugin.saveSettings();
-				});
-			});
-	}
+        toggle.onChange(async val => {
+          this.plugin.settings.addRandomId = val;
+          await this.plugin.saveSettings();
+        });
+      });
+  }
 
-	private githubTokenSettingDesc() {
-		const fragment = document.createDocumentFragment();
+  private githubTokenSettingDesc() {
+    const fragment = document.createDocumentFragment();
 
-		if (Platform.isMobile) {
-			fragment.append(
-				"As you're on mobile, token won't be saved because of security reasons."
-			);
+    if (Platform.isMobile) {
+      fragment.append(
+        "As you're on mobile, token won't be saved because of security reasons."
+      );
 
-			return fragment;
-		}
+      return fragment;
+    }
 
-		fragment.append("Token is saved in ");
+    fragment.append("Token is saved in ");
 
-		const span = document.createElement("span");
-		span.style.fontWeight = "500";
-		span.textContent = this.plugin.getAbsolutePath(".env");
+    const span = document.createElement("span");
+    span.style.fontWeight = "500";
+    span.textContent = this.plugin.getAbsolutePath(".env");
 
-		fragment.append(span);
+    fragment.append(span);
 
-		appendBrToFragment(fragment);
+    appendBrToFragment(fragment);
 
-		fragment.append(
-			"If you use any sync service, make sure to exclude this file."
-		);
+    fragment.append(
+      "If you use any sync service, make sure to exclude this file."
+    );
 
-		return fragment;
-	}
+    return fragment;
+  }
 
-	private getServerUrlDesc() {
-		const fragment = document.createDocumentFragment();
+  private getServerUrlDesc() {
+    const fragment = document.createDocumentFragment();
 
-		fragment.append(
-			"Continue to use the default server (completely private & absolutely free) or provide your own."
-		);
+    fragment.append(
+      "Continue to use the default server (completely private & absolutely free) or provide your own."
+    );
 
-		appendBrToFragment(fragment);
+    appendBrToFragment(fragment);
 
-		appendAnchorToFragment(
-			fragment,
-			"Learn what server url does",
-			SERVER_URL_VID
-		);
+    appendAnchorToFragment(
+      fragment,
+      "Learn what server url does",
+      SERVER_URL_VID
+    );
 
-		return fragment;
-	}
+    return fragment;
+  }
 }
