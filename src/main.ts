@@ -18,8 +18,19 @@ export default class ImagesFromGist extends Plugin {
 		if (addToStatusBar) this.addStatusBarItem().setText(errText);
 	}
 
+	private noServerUrlNotice(addToStatusBar: boolean = false) {
+		const errText = "❌ No Server url";
+		new Notice(errText, 3 * 1000);
+
+		if (addToStatusBar) this.addStatusBarItem().setText(errText);
+	}
+
+	private getPluginPath() {
+		return `${this.app.vault.configDir}/plugins/${this.pluginName}`;
+	}
+
 	// https://forum.obsidian.md/t/how-to-get-current-plugins-directory/26427/2
-	getAbsolutePath(fileName: string): string {
+	private getAbsolutePath(fileName: string) {
 		let basePath;
 
 		if (this.app.vault.adapter instanceof FileSystemAdapter) {
@@ -28,7 +39,7 @@ export default class ImagesFromGist extends Plugin {
 			throw new Error("Cannot determine base path.");
 		}
 
-		const relativePath = `${this.app.vault.configDir}/plugins/${this.pluginName}/${fileName}`;
+		const relativePath = `${this.getPluginPath()}/${fileName}`;
 
 		// https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60normalizePath()%60+to+clean+up+user-defined+paths
 		return normalizePath(`${basePath}/${relativePath}`);
@@ -47,14 +58,15 @@ export default class ImagesFromGist extends Plugin {
 	loadEnvVars() {
 		// https://levelup.gitconnected.com/obsidian-plugin-development-tutorial-how-to-use-environment-variables-d6f9258f3957
 		dotenv.config({ path: this.getAbsolutePath(".env") });
-
-		if (!this.getToken()) this.noGithubTokenNotice(true);
 	}
 
 	async onload() {
 		await this.loadSettings();
 
 		this.loadEnvVars();
+
+		if (!this.getToken()) this.noGithubTokenNotice(true);
+		if (!this.settings.serverUrl) this.noServerUrlNotice(true);
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new ImagesFromGistSettingsTab(this.app, this));
