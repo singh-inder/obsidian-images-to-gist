@@ -1,18 +1,20 @@
 import type ImagesFromGist from "../main";
-import { Notice, PluginSettingTab, Setting, type App } from "obsidian";
+import { PluginSettingTab, Setting, type App } from "obsidian";
 
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
 export type ImagesFromGistSettings = {
 	showConfirmationModal: boolean;
 	githubToken?: string;
-	serverUrl: string;
+	serverUrl?: string;
+	addRandomId: boolean;
 };
 
 export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
 	// TODO: update default server url to be deployed server domain
 	serverUrl: "http://localhost:5000",
-	showConfirmationModal: true
+	showConfirmationModal: true,
+	addRandomId: true
 };
 
 // TODO: ADD instructions video url here
@@ -68,7 +70,9 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 			.setName("Server url")
 			.setDesc(this.getServerUrlDesc())
 			.addText((text) => {
-				text.setValue(this.plugin.settings.serverUrl);
+				text.setValue(this.plugin.settings.serverUrl || "");
+
+				text.setPlaceholder(DEFAULT_SETTINGS.serverUrl as string);
 
 				text.onChange(async (val) => {
 					this.plugin.settings.serverUrl = val;
@@ -79,7 +83,7 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Confirm before upload")
 			.setDesc(
-				"A dialog shown when you add an image which lets you choose whether you want to upload the image or keep it local."
+				"A dialog appears when you add an image, allowing you to choose between uploading the image or keeping it local."
 			)
 			.addToggle((toggle) => {
 				toggle.setValue(this.plugin.settings.showConfirmationModal);
@@ -91,26 +95,16 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName("Reset!")
+			.setName("Add random id")
 			.setDesc(
-				"Reset to default settings. Doesn't affect github token environment variable."
+				"A random id will be added to the image gist title to ensure its uniqueness. (Enabling this feature is recommended.)"
 			)
-			.addButton((btn) => {
-				btn.setIcon("rotate-ccw");
-				btn.setCta();
-				btn.setTooltip("Reset");
+			.addToggle((toggle) => {
+				toggle.setValue(this.plugin.settings.addRandomId);
 
-				btn.onClick(async (e) => {
-					this.plugin.settings.serverUrl =
-						DEFAULT_SETTINGS.serverUrl as string;
-
-					this.plugin.settings.showConfirmationModal = true;
-
-					this.plugin.settings.githubToken = "";
-
+				toggle.onChange(async (val) => {
+					this.plugin.settings.addRandomId = val;
 					await this.plugin.saveSettings();
-
-					new Notice("✔ Reopen settings to see changes.", 2 * 1000);
 				});
 			});
 	}
