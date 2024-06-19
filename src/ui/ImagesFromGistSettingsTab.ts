@@ -110,9 +110,7 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Add random id")
-      .setDesc(
-        "A random id will be added to the image gist title to ensure its uniqueness. (Enabling this feature is recommended.)"
-      )
+      .setDesc(this.getRandomIdDesc())
       .addToggle(toggle => {
         toggle.setValue(this.plugin.settings.addRandomId);
 
@@ -136,11 +134,9 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
 
     fragment.append("Token is saved in ");
 
-    const span = document.createElement("span");
-    span.style.fontWeight = "500";
-    span.textContent = this.plugin.getAbsolutePath(".env");
-
-    fragment.append(span);
+    const strongTag = document.createElement("strong");
+    strongTag.textContent = this.plugin.getAbsolutePath(".env");
+    fragment.append(strongTag);
 
     appendBrToFragment(fragment);
 
@@ -159,6 +155,22 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
     appendBrToFragment(fragment);
 
     appendAnchorToFragment(fragment, "Learn what server url does", SERVER_URL_VID);
+
+    return fragment;
+  }
+
+  private getRandomIdDesc() {
+    const fragment = document.createDocumentFragment();
+
+    fragment.append(
+      "A random id will be added to the gist title to ensure its uniqueness."
+    );
+
+    appendBrToFragment(fragment);
+
+    fragment.append(
+      "For example: If your image name is example.jpeg, it'll become example-{random id}.jpeg"
+    );
 
     return fragment;
   }
