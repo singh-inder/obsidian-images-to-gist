@@ -28,40 +28,55 @@ export const allFilesAreImages = (files: FileList) => {
   return true;
 };
 
-// https://stackoverflow.com/a/20285053
-const convertFileToBase64 = (file: File): Promise<string> => {
+export const genFileId = (file: File, addRandomId: boolean) => {
+  if (!addRandomId) return file.name;
+
+  const randomId = `${(Math.random() + 1).toString(36).substring(2, 7)}`;
+  const splitFileName = file.name.split(".");
+  return `${splitFileName[0]}-${randomId}.${splitFileName[splitFileName.length - 1]}`;
+};
+
+export const createGist = (
+  file: File,
+  fileId: string,
+  token?: string
+): Promise<GistPostApiRes> => {
   return new Promise((res, rej) => {
+    if (!token) return rej("No Github token");
+
+    /// https://stackoverflow.com/a/20285053
     const reader = new FileReader();
 
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       const result = reader.result;
 
       if (!result) {
         return rej(new Error(`Unable to convert ${file.name} to base64 string`));
       }
 
-      res(result.toString().split(",")[1]);
+      const base64String = (
+        typeof result !== "string" ? result.toString() : result
+      ).split(",")[1];
+
+      // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
+      const response = await fetch("https://api.github.com/gists", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28"
+        },
+        body: JSON.stringify({
+          public: false,
+          files: { [fileId]: { content: base64String } }
+        })
+      });
+
+      res((await response.json()) as GistPostApiRes);
     };
 
     reader.onerror = e => rej(e);
+
     reader.readAsDataURL(file);
   });
-};
-
-export const createGist = async (file: File, fileName: string, token: string) => {
-  // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
-  const res = await fetch("https://api.github.com/gists", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28"
-    },
-    body: JSON.stringify({
-      public: false,
-      files: { [fileName]: { content: await convertFileToBase64(file) } }
-    })
-  });
-
-  return (await res.json()) as GistPostApiRes;
 };

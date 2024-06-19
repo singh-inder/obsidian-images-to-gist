@@ -1,8 +1,6 @@
 import { App, Modal, ButtonComponent } from "obsidian";
 
-const results = ["upload", "alwaysUpload", "local"] as const;
-
-type Result = (typeof results)[number];
+type Result = "upload" | "alwaysUpload" | "local";
 
 export default class UploadConfirmationModal extends Modal {
   private userResponded = false;

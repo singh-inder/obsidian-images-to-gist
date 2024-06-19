@@ -15,7 +15,7 @@ import ImagesFromGistSettingsTab, {
 } from "./ui/ImagesFromGistSettingsTab";
 import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
-import { allFilesAreImages, createGist } from "./lib/utils";
+import { allFilesAreImages, createGist, genFileId } from "./lib/utils";
 import { PasteEventCopy, DragEventCopy } from "./event-classes";
 
 declare module "obsidian" {
@@ -141,26 +141,16 @@ export default class ImagesFromGist extends Plugin {
       modal.open();
 
       const result = await modal.waitForResponse();
+      if (!result) return;
 
-      switch (result) {
-        case "alwaysUpload":
-          {
-            this.settings.showConfirmationModal = false;
-            this.saveSettings();
-          }
-          break;
-
-        case "upload":
-          break;
-
-        case "local": {
-          return markdownView.currentMode.clipboardManager.handlePaste(
-            new PasteEventCopy(e)
-          );
-        }
-
-        default:
-          return;
+      // no need to handle upload case
+      if (result === "alwaysUpload") {
+        this.settings.showConfirmationModal = false;
+        this.saveSettings();
+      } else if (result === "local") {
+        return markdownView.currentMode.clipboardManager.handlePaste(
+          new PasteEventCopy(e)
+        );
       }
     }
 
@@ -178,25 +168,14 @@ export default class ImagesFromGist extends Plugin {
     if (!token) return this.noGithubTokenNotice();
     if (!serverUrl) return this.noServerUrlNotice();
 
-    let fileName = file.name;
+    const fileId = genFileId(file, addRandomId);
 
-    if (addRandomId) {
-      const randomId = `${(Math.random() + 1).toString(36).substring(2, 7)}`;
-
-      const splitFileName = file.name.split(".");
-      const extension = splitFileName[splitFileName.length - 1];
-
-      fileName = `${splitFileName[0]}-${randomId}.${extension}`;
-    }
-
-    this.insertTemporaryText(fileName, atPos);
+    this.insertTemporaryText(fileId, atPos);
 
     try {
-      const res = await createGist(file, fileName, token);
+      const imgUrl = await this.upload(file, fileId);
 
-      const imgUrl = `${serverUrl}?url=${res.files[fileName].raw_url}`;
-
-      const progressText = ImagesFromGist.progressTextFor(fileName);
+      const progressText = ImagesFromGist.progressTextFor(fileId);
 
       const markDownImage = `![](${imgUrl})`;
 
@@ -205,12 +184,17 @@ export default class ImagesFromGist extends Plugin {
       if (editor)
         ImagesFromGist.replaceFirstOccurrence(editor, progressText, markDownImage);
     } catch (error) {
-      console.error(`Failed to create gist for ${fileName}: `, error);
+      console.error(`Failed to create gist for ${fileId}: `, error);
 
-      this.handleFailedUpload(fileName, `⚠️failed to create gist, ${error.message}`);
+      this.handleFailedUpload(fileId, `⚠️failed to create gist, ${error.message}`);
 
       throw error;
     }
+  }
+
+  async upload(file: File, fileId: string) {
+    const res = await createGist(file, fileId, this.getToken());
+    return `${this.settings.serverUrl}?url=${res.files[fileId].raw_url}`;
   }
 
   private handleFailedUpload(pasteId: string, message: string) {
@@ -296,26 +280,16 @@ export default class ImagesFromGist extends Plugin {
       modal.open();
 
       const result = await modal.waitForResponse();
+      if (!result) return;
 
-      switch (result) {
-        case "alwaysUpload":
-          {
-            this.settings.showConfirmationModal = false;
-            this.saveSettings();
-          }
-          break;
-
-        case "upload":
-          break;
-
-        case "local": {
-          return markdownView.currentMode.clipboardManager.handleDrop(
-            DragEventCopy.create(e, files)
-          );
-        }
-
-        default:
-          return;
+      // no need to handle upload case
+      if (result === "alwaysUpload") {
+        this.settings.showConfirmationModal = false;
+        this.saveSettings();
+      } else if (result === "local") {
+        return markdownView.currentMode.clipboardManager.handleDrop(
+          DragEventCopy.create(e, files)
+        );
       }
     }
 
