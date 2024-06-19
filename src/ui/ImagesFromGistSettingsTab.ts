@@ -18,6 +18,9 @@ export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
 };
 
 // TODO: ADD video url here
+const GITHUB_TOKEN_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
+
+// TODO: ADD video url here
 const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
@@ -141,6 +144,14 @@ export default class ImagesFromGistSettingsTab extends PluginSettingTab {
     appendBrToFragment(fragment);
 
     fragment.append("If you use any sync service, make sure to exclude this file.");
+
+    appendBrToFragment(fragment);
+
+    appendAnchorToFragment(
+      fragment,
+      "Learn how to generate github token",
+      GITHUB_TOKEN_VID
+    );
 
     return fragment;
   }
