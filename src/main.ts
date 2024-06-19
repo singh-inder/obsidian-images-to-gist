@@ -16,7 +16,7 @@ import ImagesFromGistSettingsTab, {
 import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
 import { allFilesAreImages, createGist } from "./lib/utils";
-import { PasteEventCopy } from "./event-classes";
+import { PasteEventCopy, DragEventCopy } from "./event-classes";
 
 declare module "obsidian" {
   interface MarkdownSubView {
@@ -114,8 +114,10 @@ export default class ImagesFromGist extends Plugin {
   }
 
   private setupHandlers() {
-    this.registerEvent(this.app.workspace.on("editor-paste", this.customPasteEventCb));
-    // TODO: handle drag & drop event
+    const { workspace } = this.app;
+
+    this.registerEvent(workspace.on("editor-paste", this.customPasteEventCb));
+    this.registerEvent(workspace.on("editor-drop", this.customDropEventListener));
   }
 
   private customPasteEventCb = async (
@@ -261,4 +263,84 @@ export default class ImagesFromGist extends Plugin {
       break;
     }
   }
+
+  private customDropEventListener = async (
+    e: DragEvent,
+    _: Editor,
+    markdownView: MarkdownView
+  ) => {
+    if (e instanceof DragEventCopy) return;
+
+    if (!this.getToken()) return this.noGithubTokenNotice();
+    if (!this.settings.serverUrl) return this.noServerUrlNotice();
+
+    const dataTransfer = e.dataTransfer;
+
+    if (
+      !dataTransfer ||
+      dataTransfer.types.length !== 1 ||
+      dataTransfer.types[0] !== "Files"
+    ) {
+      return;
+    }
+
+    // Preserve files before showing modal, otherwise they will be lost from the event
+    const { files } = dataTransfer;
+
+    if (!allFilesAreImages(files)) return;
+
+    e.preventDefault();
+
+    if (this.settings.showConfirmationModal) {
+      const modal = new UploadConfirmationModal(this.app);
+      modal.open();
+
+      const result = await modal.waitForResponse();
+
+      switch (result) {
+        case "alwaysUpload":
+          {
+            this.settings.showConfirmationModal = false;
+            this.saveSettings();
+          }
+          break;
+
+        case "upload":
+          break;
+
+        case "local": {
+          return markdownView.currentMode.clipboardManager.handleDrop(
+            DragEventCopy.create(e, files)
+          );
+        }
+
+        default:
+          return;
+      }
+    }
+
+    // Adding newline to avoid messing images pasted via default handler with any text added by the plugin
+    this.getEditor()?.replaceSelection("\n");
+
+    const promises: Promise<void>[] = [];
+    const filesFailedToUpload: File[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const image = files[i];
+
+      const uploadPromise = this.createGistAndEmbedImage(image).catch(() => {
+        filesFailedToUpload.push(image);
+      });
+
+      promises.push(uploadPromise);
+    }
+
+    await Promise.all(promises);
+
+    if (filesFailedToUpload.length === 0) return;
+
+    markdownView.currentMode.clipboardManager.handleDrop(
+      DragEventCopy.create(e, filesFailedToUpload)
+    );
+  };
 }
