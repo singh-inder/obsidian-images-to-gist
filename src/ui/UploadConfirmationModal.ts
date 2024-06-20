@@ -1,13 +1,13 @@
 import { App, Modal, ButtonComponent } from "obsidian";
 
-type Result = "upload" | "alwaysUpload" | "local";
+type Response = "upload" | "alwaysUpload" | "local";
 
 export default class UploadConfirmationModal extends Modal {
   private userResponded = false;
 
   // https://stackoverflow.com/a/77808165
-  private localPromise: Promise<Result | undefined>;
-  private localResolve: (result?: Result) => void;
+  private localPromise: Promise<Response | undefined>;
+  private localResolve: (response?: Response) => void;
   // private localReject: (error: Error) => void;
 
   constructor(app: App) {
@@ -23,9 +23,9 @@ export default class UploadConfirmationModal extends Modal {
     return this.localPromise;
   }
 
-  private respond(result: Result) {
+  private respond(response: Response) {
     this.userResponded = true;
-    this.localResolve(result);
+    this.localResolve(response);
     this.close();
   }
 

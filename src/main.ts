@@ -6,7 +6,8 @@ import {
   Plugin,
   normalizePath,
   MarkdownView,
-  type EditorPosition
+  type EditorPosition,
+  type CanvasView
 } from "obsidian";
 
 import SettingsTab, { DEFAULT_SETTINGS, type PluginSettings } from "./ui/SettingsTab";
@@ -19,6 +20,7 @@ import {
   removeCommitHash
 } from "./lib/utils";
 import { PasteEventCopy, DragEventCopy } from "./event-classes";
+import { createCanvasPasteHandler, type PasteHandler } from "./lib/Canvas";
 
 declare module "obsidian" {
   interface MarkdownSubView {
@@ -26,7 +28,7 @@ declare module "obsidian" {
   }
 
   interface CanvasView extends TextFileView {
-    handlePaste: (e: ClipboardEvent) => Promise<void>;
+    handlePaste: PasteHandler;
   }
 
   interface Editor {
@@ -120,6 +122,17 @@ export default class ImagesFromGist extends Plugin {
 
     this.registerEvent(workspace.on("editor-paste", this.customPasteEventCb));
     this.registerEvent(workspace.on("editor-drop", this.customDropEventListener));
+
+    this.registerEvent(
+      workspace.on("active-leaf-change", leaf => {
+        if (!leaf) return;
+        const view = leaf.view;
+
+        if (view.getViewType() === "canvas") {
+          this.overridePasteHandlerForCanvasView(view as CanvasView);
+        }
+      })
+    );
   }
 
   private customPasteEventCb = async (
@@ -319,4 +332,9 @@ export default class ImagesFromGist extends Plugin {
       DragEventCopy.create(e, filesFailedToUpload)
     );
   };
+
+  private overridePasteHandlerForCanvasView(view: CanvasView) {
+    const originalPasteFn = view.handlePaste;
+    view.handlePaste = createCanvasPasteHandler(this, originalPasteFn);
+  }
 }
