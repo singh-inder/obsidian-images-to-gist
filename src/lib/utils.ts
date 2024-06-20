@@ -10,11 +10,8 @@ export const appendAnchorToFragment = (
   href: string
 ) => {
   const a = document.createElement("a");
-
   a.textContent = textContent;
-
   a.setAttribute("href", href);
-
   fragment.append(a);
 };
 
@@ -85,4 +82,16 @@ export const createGist = (
 
     reader.readAsDataURL(file);
   });
+};
+
+// https://stackoverflow.com/a/43828391
+export const markdownImgTagRegex = /!\[(.*?)\]\((.*?)\)/g;
+
+// https://chatgpt.com/share/1732e9c3-c335-44a8-b3d5-a9e61c24b378
+
+const altAndSrcRegex = /!\[(.*?)\]\((.*?)\)/;
+
+export const extractAltAndSrcFromMarkdownImg = (markdownImg: string) => {
+  const matchedGroup = markdownImg.match(altAndSrcRegex);
+  return matchedGroup ? { alt: matchedGroup[1], src: matchedGroup[2] } : null;
 };

@@ -84,7 +84,7 @@ export default class SettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Server url")
+      .setName("Image server url")
       .setDesc(this.getServerUrlDesc())
       .addText(text => {
         text.setValue(this.plugin.settings.serverUrl || "");
@@ -165,7 +165,7 @@ export default class SettingsTab extends PluginSettingTab {
 
     appendBrToFragment(fragment);
 
-    appendAnchorToFragment(fragment, "Learn what server url does", SERVER_URL_VID);
+    appendAnchorToFragment(fragment, "Learn what image server does", SERVER_URL_VID);
 
     return fragment;
   }

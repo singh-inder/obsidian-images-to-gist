@@ -16,7 +16,9 @@ import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 import {
   allFilesAreImages,
   createGist,
+  extractAltAndSrcFromMarkdownImg,
   genFileId,
+  markdownImgTagRegex,
   removeCommitHash
 } from "./lib/utils";
 import { PasteEventCopy, DragEventCopy } from "./event-classes";
@@ -105,6 +107,33 @@ export default class ImagesFromGist extends Plugin {
     this.addSettingTab(new SettingsTab(this.app, this));
 
     this.setupHandlers();
+
+    this.addCommand({
+      id: "update-images-server-url",
+      name: "Update images server url",
+      editorCallback: (editor, view) => {
+        const serverUrl = this.settings.serverUrl;
+        if (!serverUrl) return this.noServerUrlNotice();
+
+        const newValue = editor.getValue().replace(markdownImgTagRegex, matched => {
+          const data = extractAltAndSrcFromMarkdownImg(matched);
+
+          if (!data) return matched;
+
+          try {
+            const gistUrl = new URL(data.src).searchParams.get("url") || "";
+
+            const updatedUrl = `${serverUrl}?url=${encodeURIComponent(gistUrl)}`;
+
+            return `![${data.alt}](${updatedUrl})`;
+          } catch (error) {
+            return matched;
+          }
+        });
+
+        editor.setValue(newValue);
+      }
+    });
   }
 
   onunload() {}
