@@ -36,6 +36,12 @@ export const genFileId = (file: File, addRandomId: boolean) => {
   return `${splitFileName[0]}-${randomId}.${splitFileName[splitFileName.length - 1]}`;
 };
 
+export const removeCommitHash = (url: string) => {
+  const splitUrl = url.split("raw");
+  const fileName = splitUrl.pop()?.split("/").pop();
+  return `${splitUrl[0]}/raw/${fileName}`;
+};
+
 export const createGist = (
   file: File,
   fileId: string,

@@ -12,7 +12,12 @@ import {
 import SettingsTab, { DEFAULT_SETTINGS, type PluginSettings } from "./ui/SettingsTab";
 import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
-import { allFilesAreImages, createGist, genFileId } from "./lib/utils";
+import {
+  allFilesAreImages,
+  createGist,
+  genFileId,
+  removeCommitHash
+} from "./lib/utils";
 import { PasteEventCopy, DragEventCopy } from "./event-classes";
 
 declare module "obsidian" {
@@ -191,7 +196,7 @@ export default class ImagesFromGist extends Plugin {
 
   async upload(file: File, fileId: string) {
     const res = await createGist(file, fileId, this.getToken());
-    return `${this.settings.serverUrl}?url=${res.files[fileId].raw_url}`;
+    return `${this.settings.serverUrl}?url=${encodeURIComponent(removeCommitHash(res.files[fileId].raw_url))}`;
   }
 
   private handleFailedUpload(pasteId: string, message: string) {
