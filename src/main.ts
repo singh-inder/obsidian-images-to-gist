@@ -9,10 +9,7 @@ import {
   type EditorPosition
 } from "obsidian";
 
-import ImagesFromGistSettingsTab, {
-  DEFAULT_SETTINGS,
-  type ImagesFromGistSettings
-} from "./ui/ImagesFromGistSettingsTab";
+import SettingsTab, { DEFAULT_SETTINGS, type PluginSettings } from "./ui/SettingsTab";
 import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
 import { allFilesAreImages, createGist, genFileId } from "./lib/utils";
@@ -49,7 +46,7 @@ export default class ImagesFromGist extends Plugin {
   // same as in manifest.json
   pluginName = "images-from-gist";
 
-  settings: ImagesFromGistSettings;
+  settings: PluginSettings;
 
   private noGithubTokenNotice() {
     new Notice("❌ No Github token", 3 * 1000);
@@ -98,7 +95,7 @@ export default class ImagesFromGist extends Plugin {
     if (!this.settings.serverUrl) this.noServerUrlNotice();
 
     // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new ImagesFromGistSettingsTab(this.app, this));
+    this.addSettingTab(new SettingsTab(this.app, this));
 
     this.setupHandlers();
   }

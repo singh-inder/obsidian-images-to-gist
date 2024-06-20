@@ -3,14 +3,14 @@ import { Platform, PluginSettingTab, Setting, type App } from "obsidian";
 
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
-export type ImagesFromGistSettings = {
+export type PluginSettings = {
   showConfirmationModal: boolean;
   githubToken?: string;
   serverUrl?: string;
   addRandomId: boolean;
 };
 
-export const DEFAULT_SETTINGS: ImagesFromGistSettings = {
+export const DEFAULT_SETTINGS: PluginSettings = {
   // TODO: update default server url to be deployed server domain
   serverUrl: "http://localhost:5000",
   showConfirmationModal: true,
@@ -24,7 +24,7 @@ const GITHUB_TOKEN_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
-export default class ImagesFromGistSettingsTab extends PluginSettingTab {
+export default class SettingsTab extends PluginSettingTab {
   plugin: ImagesFromGist;
 
   constructor(app: App, plugin: ImagesFromGist) {
