@@ -25,32 +25,21 @@ export const allFilesAreImages = (files: FileList) => {
   return true;
 };
 
-export const genFileId = (file: File, addRandomId: boolean) => {
-  if (!addRandomId) return file.name;
-
-  const randomId = `${(Math.random() + 1).toString(36).substring(2, 7)}`;
-  const splitFileName = file.name.split(".");
-  return `${splitFileName[0]}-${randomId}.${splitFileName[splitFileName.length - 1]}`;
-};
-
+// https://stackoverflow.com/a/47175630
 export const removeCommitHash = (url: string) => {
   const splitUrl = url.split("raw");
   const fileName = splitUrl.pop()?.split("/").pop();
   return `${splitUrl[0]}raw/${fileName}`;
 };
 
-export const createGist = (
-  file: File,
-  fileId: string,
-  token?: string
-): Promise<GistPostApiRes> => {
+export const createGist = (file: File, token: string): Promise<GistPostApiRes> => {
   return new Promise((res, rej) => {
     if (!token) return rej("No Github token");
 
     /// https://stackoverflow.com/a/20285053
     const reader = new FileReader();
 
-    reader.onloadend = async () => {
+    reader.onload = async () => {
       const result = reader.result;
 
       if (!result) {
@@ -71,7 +60,7 @@ export const createGist = (
         },
         body: JSON.stringify({
           public: false,
-          files: { [fileId]: { content: base64String } }
+          files: { [file.name]: { content: base64String } }
         })
       });
 

@@ -7,14 +7,12 @@ export type PluginSettings = {
   showConfirmationModal: boolean;
   githubToken?: string;
   serverUrl?: string;
-  addRandomId: boolean;
 };
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   // TODO: update default server url to be deployed server domain
   serverUrl: "http://localhost:5000",
-  showConfirmationModal: true,
-  addRandomId: true
+  showConfirmationModal: true
 };
 
 // TODO: ADD video url here
@@ -110,18 +108,6 @@ export default class SettingsTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         });
       });
-
-    new Setting(containerEl)
-      .setName("Add random id")
-      .setDesc(this.getRandomIdDesc())
-      .addToggle(toggle => {
-        toggle.setValue(this.plugin.settings.addRandomId);
-
-        toggle.onChange(async val => {
-          this.plugin.settings.addRandomId = val;
-          await this.plugin.saveSettings();
-        });
-      });
   }
 
   private githubTokenSettingDesc() {
@@ -166,22 +152,6 @@ export default class SettingsTab extends PluginSettingTab {
     appendBrToFragment(fragment);
 
     appendAnchorToFragment(fragment, "Learn what image server does", SERVER_URL_VID);
-
-    return fragment;
-  }
-
-  private getRandomIdDesc() {
-    const fragment = document.createDocumentFragment();
-
-    fragment.append(
-      "A random id will be added to the gist title to ensure its uniqueness."
-    );
-
-    appendBrToFragment(fragment);
-
-    fragment.append(
-      "For example: If your image name is example.jpeg, it'll become example-{random id}.jpeg"
-    );
 
     return fragment;
   }

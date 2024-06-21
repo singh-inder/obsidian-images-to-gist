@@ -4,7 +4,7 @@ import { Canvas } from "obsidian";
 import UploadConfirmationModal from "../ui/UploadConfirmationModal";
 import UploadBlockingModal from "../ui/UploadBlockingModal";
 
-import { allFilesAreImages, genFileId } from "./utils";
+import { allFilesAreImages } from "./utils";
 
 function buildPasteEventCopy(originalEvent: ClipboardEvent, files: File[] | FileList) {
   const clipboardData = new DataTransfer();
@@ -72,10 +72,8 @@ async function uploadImageOnCanvas(
   const file = e.clipboardData?.files[0];
   if (!file) return;
 
-  const fileId = genFileId(file, plugin.settings.addRandomId);
-
   try {
-    const imgUrl = await plugin.upload(file, fileId);
+    const imgUrl = await plugin.upload(file);
 
     if (!modal.isOpen) return;
 

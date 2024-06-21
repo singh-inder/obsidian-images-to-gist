@@ -17,7 +17,6 @@ import {
   allFilesAreImages,
   createGist,
   extractAltAndSrcFromMarkdownImg,
-  genFileId,
   markdownImgTagRegex,
   removeCommitHash
 } from "./lib/utils";
@@ -117,18 +116,14 @@ export default class ImagesFromGist extends Plugin {
 
         const newValue = editor.getValue().replace(markdownImgTagRegex, matched => {
           const data = extractAltAndSrcFromMarkdownImg(matched);
-
           if (!data) return matched;
 
-          try {
-            const gistUrl = new URL(data.src).searchParams.get("url") || "";
+          const urlQueryParam = data.src.split("?url=").pop();
+          if (!urlQueryParam) return matched;
 
-            const updatedUrl = `${serverUrl}?url=${encodeURIComponent(gistUrl)}`;
+          const updatedUrl = `${serverUrl}?url=${urlQueryParam}`;
 
-            return `![${data.alt}](${updatedUrl})`;
-          } catch (error) {
-            return matched;
-          }
+          return `![${data.alt}](${updatedUrl})`;
         });
 
         editor.setValue(newValue);
@@ -207,19 +202,19 @@ export default class ImagesFromGist extends Plugin {
 
   private async createGistAndEmbedImage(file: File, atPos?: EditorPosition) {
     const token = this.getToken();
-    const { addRandomId, serverUrl } = this.settings;
+    const { serverUrl } = this.settings;
 
     if (!token) return this.noGithubTokenNotice();
     if (!serverUrl) return this.noServerUrlNotice();
 
-    const fileId = genFileId(file, addRandomId);
+    const pasteId = (Math.random() + 1).toString(36).substring(2, 7);
 
-    this.insertTemporaryText(fileId, atPos);
+    this.insertTemporaryText(pasteId, atPos);
 
     try {
-      const imgUrl = await this.upload(file, fileId);
+      const imgUrl = await this.upload(file);
 
-      const progressText = ImagesFromGist.progressTextFor(fileId);
+      const progressText = ImagesFromGist.progressTextFor(pasteId);
 
       const markDownImage = `![](${imgUrl})`;
 
@@ -228,17 +223,17 @@ export default class ImagesFromGist extends Plugin {
       if (editor)
         ImagesFromGist.replaceFirstOccurrence(editor, progressText, markDownImage);
     } catch (error) {
-      console.error(`Failed to create gist for ${fileId}: `, error);
+      console.error(`Failed to create gist for ${pasteId}: `, error);
 
-      this.handleFailedUpload(fileId, `⚠️failed to create gist, ${error.message}`);
+      this.handleFailedUpload(pasteId, `⚠️failed to create gist, ${error.message}`);
 
       throw error;
     }
   }
 
-  async upload(file: File, fileId: string) {
-    const res = await createGist(file, fileId, this.getToken());
-    return `${this.settings.serverUrl}?url=${encodeURIComponent(removeCommitHash(res.files[fileId].raw_url))}`;
+  async upload(file: File) {
+    const res = await createGist(file, this.getToken() as string);
+    return `${this.settings.serverUrl}?url=${removeCommitHash(res.files[file.name].raw_url)}`;
   }
 
   private handleFailedUpload(pasteId: string, message: string) {
