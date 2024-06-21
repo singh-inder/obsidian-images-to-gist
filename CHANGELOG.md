@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.0](https://github.com/singhinder2/images-from-gist/compare/0.2.0...0.3.0) (2024-06-21)
+
+### ⚠ BREAKING CHANGES
+
+- **main.ts:** commit hash removed from the gist url. this will result in always using the gist's latest commit and reduce the length of url
+
+### Features
+
+- register command to update server urls for all images in the file ([5153dc8](https://github.com/singhinder2/images-from-gist/commit/5153dc836f39016ce4af60599d2259a141764290))
+- **main.ts:** handle canvas paste event ([8a5c855](https://github.com/singhinder2/images-from-gist/commit/8a5c855e399b22804bade2b94895fe8964ff9860))
+- **main.ts:** encode gist url ([a4fc655](https://github.com/singhinder2/images-from-gist/commit/a4fc65553d8b3a81be3e4ff19cadd2cb47a3a917))
+- **ImagesFromGistSettingsTab:** update github token setting description ([248a7ca](https://github.com/singhinder2/images-from-gist/commit/248a7ca8d5c5a80514a3adbd59cee47df6ad67c5))
+
+### Bug Fixes
+
+- **utils:** remove extra forward slash in removeCommitHash return value ([547d6df](https://github.com/singhinder2/images-from-gist/commit/547d6dfa854f81fd415501f5a042d31835cd4134))
+
 ## [0.2.0](https://github.com/inderrr/images-from-gist/compare/0.1.0...0.2.0) (2024-06-19)
 
 ### Features
