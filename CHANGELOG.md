@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.4.0](https://github.com/singh-inder/images-from-gist/compare/0.3.0...0.4.0) (2024-06-26)
+
+### ⚠ BREAKING CHANGES
+
+- **SettingsTab:** - no longer generate a separate fileId based on randomId setting
+
+* no longer encode gist uri
+
+### Features
+
+- **SettingsTab:** remove randomId setting ([404551b](https://github.com/singh-inder/images-from-gist/commit/404551b7033b28ffc2321a5d946aa4521e7e5555))
+
 ## [0.3.0](https://github.com/singhinder2/images-from-gist/compare/0.2.0...0.3.0) (2024-06-21)
 
 ### ⚠ BREAKING CHANGES
