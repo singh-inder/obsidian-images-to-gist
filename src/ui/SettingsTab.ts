@@ -1,5 +1,5 @@
 import type ImagesFromGist from "../main";
-import { Platform, PluginSettingTab, Setting, type App } from "obsidian";
+import { PluginSettingTab, Setting, type App } from "obsidian";
 
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
@@ -55,26 +55,11 @@ export default class SettingsTab extends PluginSettingTab {
         text.onChange(async val => {
           this.plugin.settings.githubToken = val;
 
-          // early return mobile platform as dotenv cannot run on mobile platform.
-          if (Platform.isMobile) return;
-
           try {
-            // console.log(this.app)
-            const adapter = this.app.vault.adapter;
-
-            const envFilePath = `${this.plugin.getPluginPath()}/.env`;
-            const envFileExists = await adapter.exists(envFilePath);
-
-            const envValue = `GITHUB_TOKEN=${val}`;
-
-            if (envFileExists) {
-              // https://docs.obsidian.md/Plugins/Vault#Modify+files
-              await adapter.process(envFilePath, fileData => {
-                return envValue;
-              });
-            } else {
-              await adapter.write(envFilePath, envValue);
-            }
+            await this.app.vault.adapter.write(
+              this.plugin.getEnvFilePath(),
+              `${this.plugin.githubTokenEnv}=${val}`
+            );
           } catch (error) {
             console.error(error);
           }
@@ -82,7 +67,7 @@ export default class SettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Image server url")
+      .setName("Image server domain")
       .setDesc(this.getServerUrlDesc())
       .addText(text => {
         text.setValue(this.plugin.settings.serverUrl || "");
@@ -112,14 +97,6 @@ export default class SettingsTab extends PluginSettingTab {
 
   private githubTokenSettingDesc() {
     const fragment = document.createDocumentFragment();
-
-    if (Platform.isMobile) {
-      fragment.append(
-        "As you're on mobile, token won't be saved because of security reasons."
-      );
-
-      return fragment;
-    }
 
     fragment.append("Token is saved in ");
 

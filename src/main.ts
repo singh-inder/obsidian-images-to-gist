@@ -1,5 +1,4 @@
 import {
-  Platform,
   Editor,
   FileSystemAdapter,
   Notice,
@@ -13,6 +12,7 @@ import {
 import SettingsTab, { DEFAULT_SETTINGS, type PluginSettings } from "./ui/SettingsTab";
 import UploadConfirmationModal from "./ui/UploadConfirmationModal";
 
+import parseEnv from "./lib/parseEnv";
 import {
   allFilesAreImages,
   createGist,
@@ -53,7 +53,7 @@ type ClipboardManager = {
 export default class ImagesFromGist extends Plugin {
   // same as in manifest.json
   pluginName = "images-from-gist";
-
+  githubTokenEnv = "GITHUB_TOKEN" as const;
   settings: PluginSettings;
 
   private noGithubTokenNotice() {
@@ -85,19 +85,25 @@ export default class ImagesFromGist extends Plugin {
   }
 
   getToken() {
-    return process.env.GITHUB_TOKEN || this.settings.githubToken;
+    return this.settings.githubToken;
   }
 
-  async loadEnvVars() {
-    // https://levelup.gitconnected.com/obsidian-plugin-development-tutorial-how-to-use-environment-variables-d6f9258f3957
-    (await import("dotenv")).config({ path: this.getAbsolutePath(".env") });
+  getEnvFilePath() {
+    return `${this.getPluginPath()}/.env`;
+  }
+
+  private async loadEnv() {
+    try {
+      const data = await this.app.vault.adapter.read(this.getEnvFilePath());
+      this.settings.githubToken = parseEnv(data)[this.githubTokenEnv];
+    } catch (error) {
+      console.log("error loading env file", error.message);
+    }
   }
 
   async onload() {
     await this.loadSettings();
-
-    // dotenv internally uses nodejs apis which isn't supported on mobile platforms
-    if (!Platform.isMobile) await this.loadEnvVars();
+    await this.loadEnv();
 
     if (!this.getToken()) this.noGithubTokenNotice();
     if (!this.settings.serverUrl) this.noServerUrlNotice();
