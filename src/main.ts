@@ -20,7 +20,7 @@ import {
   markdownImgTagRegex,
   removeCommitHash
 } from "./lib/utils";
-import { PasteEventCopy, DragEventCopy } from "./event-classes";
+import { PasteEventCopy, DragEventCopy } from "./eventClasses";
 import { createCanvasPasteHandler, type PasteHandler } from "./lib/Canvas";
 
 declare module "obsidian" {
@@ -114,8 +114,8 @@ export default class ImagesFromGist extends Plugin {
     this.setupHandlers();
 
     this.addCommand({
-      id: "update-images-server-url",
-      name: "Update images server url",
+      id: "update-image-server-urls",
+      name: "Update all image server urls",
       editorCallback: (editor, view) => {
         const serverUrl = this.settings.serverUrl;
         if (!serverUrl) return this.noServerUrlNotice();
@@ -124,10 +124,10 @@ export default class ImagesFromGist extends Plugin {
           const data = extractAltAndSrcFromMarkdownImg(matched);
           if (!data) return matched;
 
-          const urlQueryParam = data.src.split("?url=").pop();
-          if (!urlQueryParam) return matched;
+          const val = data.src.split("?url=").pop();
+          if (!val) return matched;
 
-          const updatedUrl = `${serverUrl}?url=${urlQueryParam}`;
+          const updatedUrl = `${serverUrl}?url=${val}`;
 
           return `![${data.alt}](${updatedUrl})`;
         });

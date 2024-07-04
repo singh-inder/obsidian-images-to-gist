@@ -10,16 +10,13 @@ export type PluginSettings = {
 };
 
 export const DEFAULT_SETTINGS: PluginSettings = {
-  // TODO: update default server url to be deployed server domain
-  serverUrl: "http://localhost:5000",
-  showConfirmationModal: true
+  serverUrl: "https://ifg.singhinder.com",
+  showConfirmationModal: false
 };
 
-// TODO: ADD video url here
-const GITHUB_TOKEN_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
+const GITHUB_TOKEN_GUIDE = "https://pluginguide.singhinder.com?g=token";
 
-// TODO: ADD video url here
-const SERVER_URL_VID = "https://www.youtube.com/watch?v=0BIaDVnYp2A";
+const SERVER_URL_GUIDE = "https://pluginguide.singhinder.com?g=serverurl";
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
 export default class SettingsTab extends PluginSettingTab {
@@ -36,9 +33,7 @@ export default class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60setHeading%60+instead+of+a+%60%3Ch1%3E%60%2C+%60%3Ch2%3E%60
-    new Setting(containerEl)
-      .setName("Images From Gist Plugin - Settings")
-      .setHeading();
+    new Setting(containerEl).setName("Images From Gist - Settings").setHeading();
 
     const token = this.plugin.getToken();
 
@@ -67,7 +62,7 @@ export default class SettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Image server domain")
+      .setName("Image server url")
       .setDesc(this.getServerUrlDesc())
       .addText(text => {
         text.setValue(this.plugin.settings.serverUrl || "");
@@ -113,7 +108,7 @@ export default class SettingsTab extends PluginSettingTab {
     appendAnchorToFragment(
       fragment,
       "Learn how to generate github token",
-      GITHUB_TOKEN_VID
+      GITHUB_TOKEN_GUIDE
     );
 
     return fragment;
@@ -128,7 +123,7 @@ export default class SettingsTab extends PluginSettingTab {
 
     appendBrToFragment(fragment);
 
-    appendAnchorToFragment(fragment, "Learn what image server does", SERVER_URL_VID);
+    appendAnchorToFragment(fragment, "Learn what image server does", SERVER_URL_GUIDE);
 
     return fragment;
   }
