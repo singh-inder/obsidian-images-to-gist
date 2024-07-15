@@ -50,9 +50,9 @@ type ClipboardManager = {
   handleDrop(e: DragEvent): void;
 };
 
-export default class ImagesFromGist extends Plugin {
+export default class ImagesToGist extends Plugin {
   // same as in manifest.json
-  pluginName = "images-from-gist";
+  pluginName = "images-to-gist";
   githubTokenEnv = "GITHUB_TOKEN" as const;
   settings: PluginSettings;
 
@@ -220,14 +220,14 @@ export default class ImagesFromGist extends Plugin {
     try {
       const imgUrl = await this.upload(file);
 
-      const progressText = ImagesFromGist.progressTextFor(pasteId);
+      const progressText = ImagesToGist.progressTextFor(pasteId);
 
       const markDownImage = `![](${imgUrl})`;
 
       const editor = this.getEditor();
 
       if (editor)
-        ImagesFromGist.replaceFirstOccurrence(editor, progressText, markDownImage);
+        ImagesToGist.replaceFirstOccurrence(editor, progressText, markDownImage);
     } catch (error) {
       console.error(`Failed to create gist for ${pasteId}: `, error);
 
@@ -243,12 +243,12 @@ export default class ImagesFromGist extends Plugin {
   }
 
   private handleFailedUpload(pasteId: string, message: string) {
-    const progressText = ImagesFromGist.progressTextFor(pasteId);
+    const progressText = ImagesToGist.progressTextFor(pasteId);
 
     const editor = this.getEditor();
 
     if (editor)
-      ImagesFromGist.replaceFirstOccurrence(editor, progressText, `<!--${message}-->`);
+      ImagesToGist.replaceFirstOccurrence(editor, progressText, `<!--${message}-->`);
   }
 
   private static progressTextFor(id: string) {
@@ -256,7 +256,7 @@ export default class ImagesFromGist extends Plugin {
   }
 
   private insertTemporaryText(pasteId: string, atPos?: EditorPosition) {
-    const progressText = ImagesFromGist.progressTextFor(pasteId);
+    const progressText = ImagesToGist.progressTextFor(pasteId);
 
     const replacement = `${progressText}\n`;
 

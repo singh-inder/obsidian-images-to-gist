@@ -1,96 +1,99 @@
-# Obsidian Sample Plugin
+# Obsidian Images to Gist plugin
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This plugin uploads images as base64 strings to your GitHub account's secret Gists instead of storing them locally inside your vault. Also, allows you to resize uploaded images on the fly.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+## Demo
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+https://gist.github.com/user-attachments/assets/ed86975d-a315-47f9-97a1-f9b1ba7913af
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Features
 
-## First time developing plugins?
+- Upload your images to GitHub secret Gists as base64 strings instead of storing them locally in your vault.
 
-Quick starting guide for new plugin devs:
+- Resize uploaded images on the fly by adding `w` , `h` query params to the url. Watch [demo](#demo) or read [how to resize images](docs/getting_started.md#resize) guide.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+- Upload images by either pasting from the clipboard or by dragging them from the file system. Animated gifs upload support on drag-and-drop.
 
-## Releasing new releases
+## Installation
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+Install the plugin via the [Community Plugins](https://help.obsidian.md/Extending+Obsidian/Community+plugins) tab within Obsidian
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+## Getting Started
 
-## Adding your plugin to the community plugin list
+<!-- TODO: add youtube video url -->
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+<!-- Get up & running with [getting started video]() or if you prefer a written version [getting_started.md](/docs/getting_started.md) -->
 
-## How to use
+Get up & running with [getting_started.md](/docs/getting_started.md)
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+## Plugin Settings
 
-## Manually installing the plugin
+<!-- prettier-ignore -->
+| Setting | Description |  |
+|---|---|---|
+| GitHub Token | Personal access token for GitHub to authenticate API requests. Learn [how to generate one](/docs/getting_started.md) | Required |
+| Image Server URL | Server URL for decoding images uploaded to GitHub gist. You can continue to use the default [Images-to-gist-server](https://github.com/singh-inder/images-to-gist-server) (completely private & free) or provide your own. | Optional |
+| Confirmation Before Upload | Prompt for confirmation before uploading an image. | Default=`false` |
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+## Rate Limits
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+- **GitHub API**: As the plugin uses GitHub API,be mindful of the [github api rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#primary-rate-limit-for-authenticated-users).
+- **Images-to-gist-server**: If you use the default free image server, you'll be rate limited to 30 requests per minute. You can deploy your own server using the [Images-to-gist-server repo](https://github.com/singh-inder/images-to-gist-server) and define your own rate limits.
 
-## Funding URL
+## FAQ
 
-You can include funding URLs where people who use your plugin can financially support it.
+<details>
+<summary>How secure is this approach?</summary>
+Your image uploaded to GitHub secret Gists cannot be seen unless you share a link or someone magically guesses the URL to your gist.
+</details>
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+<br>
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+<details>
+<summary>Why does the plugin use a separate server to fetch image data from GitHub Gists?</summary>
 
-If you have multiple URLs, you can also do:
+1. As the image is uploaded as base64 string, the response from GitHub Gist api is a base64 string. The client(Obsidian) makes a request to the image server and receives the decoded image from GitHub Gist api with the necessary `Content-Type` headers so that Obsidian can recognize the resource as an image. In layman terms, this ensures that images are displayed correctly within your notes.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+2. Also, I don't have access to service workers in Obsidian which would enable me to do decode base64 strings directly inside Obsidian. If in the future, Obsidian team allows developers to use service workers, I'll add the functionality to handle this entire process directly inside Obsidian.
+</details>
 
-## API Documentation
+<br>
 
-See https://github.com/obsidianmd/obsidian-api
+<details>
+    <summary>Is there any logging or tracking of data as the plugin uses a separate server to serve images from GitHub Gists?</summary>
+  
+  - Nope, there is no logging or tracking of data. The [images-to-gist-server](https://github.com/singh-inder/images-to-gist-server) is open source, ensuring transparency and allowing users to review it for themselves. 
+  - You can easily self host your own image server by simply forking the repo and deploying it on your platform of choice.
+</details>
+
+<br>
+
+<details>
+<summary>Will I have to manually update image server url for all existing images if I provide my own image server url after some time?</summary>
+ 
+ - No, you won't have to manually update the image server url for all existing images. 
+ - Simply open the command palette (`CTRL/CMD + P`) and search for `Update all image server urls.` This command will automatically update the image server url for all images in current file with the url you've entered in settings.
+</details>
+
+<br>
+
+<details>    
+<summary>Can I run the image server locally before I decide to deploy it?</summary>
+
+- Absolutely, you can either use [Docker](https://github.com/singh-inder/images-to-gist-server?tab=readme-ov-file#run-locally-using-docker) or [Clone the Repo](https://github.com/singh-inder/images-to-gist-server?tab=readme-ov-file#run-locally-using-docker) and run it locally.
+
+- Inside settings set your image server url to `http://localhost:5000` or whatever port you run the server on.
+</details>
+
+## Acknowledgments
+
+- code for handling image paste, drag & drop functionality is adapted from [obsidian-imgur-plugin](https://github.com/obdevimgur/obsidian-imgur-plugin).
+- hot reloads in dev environment with [hot-reload](https://github.com/pjeby/hot-reload)
+
+## Support
+
+If this plugin is helpful to you, you can show your ❤️ by giving it a star ⭐️ on GitHub.
+
+This plugin along with the default image server are offered completely free of charge. If you'd like to help cover the costs of hosting the image server or fuel my late-night coding sessions with more coffee:
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="BuyMeACoffee" width="150">](https://www.buymeacoffee.com/_inder1)

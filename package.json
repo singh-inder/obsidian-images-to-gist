@@ -1,16 +1,25 @@
 {
-  "name": "obsidian-sample-plugin",
+  "name": "images-to-gist",
   "version": "0.5.0",
-  "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  "description": "Upload images to your GitHub secret Gists. Also, resize uploaded images on the fly.",
   "main": "main.js",
+  "author": {
+    "name": "Inder Singh",
+    "email": "indersingh.dev@outlook.com",
+    "url": "https://github.com/singh-inder"
+  },
+  "repository": "https://github.com/singh-inder/obsidian-images-to-gist",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "release": "commit-and-tag-version -a -t \"\""
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "obsidian.md",
+    "GitHub",
+    "Gist"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.14.9",

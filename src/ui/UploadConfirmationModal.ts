@@ -32,7 +32,7 @@ export default class UploadConfirmationModal extends Modal {
   onOpen() {
     const { contentEl, titleEl } = this;
 
-    titleEl.setText("Images from gist");
+    titleEl.setText("Images to gist");
 
     contentEl.setText("Would you like to create a gist paste your content locally?");
 

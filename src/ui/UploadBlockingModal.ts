@@ -11,7 +11,7 @@ export default class UploadBlockingModal extends Modal {
     this.isOpen = true;
     const { contentEl, titleEl } = this;
 
-    titleEl.setText("Images from gist");
+    titleEl.setText("Images to gist");
     contentEl.setText("Uploading image...");
 
     const buttonsDiv = contentEl.createDiv("modal-button-container");

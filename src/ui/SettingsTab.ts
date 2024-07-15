@@ -1,4 +1,4 @@
-import type ImagesFromGist from "../main";
+import type ImagesToGist from "../main";
 import { PluginSettingTab, Setting, type App } from "obsidian";
 
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
@@ -10,19 +10,21 @@ export type PluginSettings = {
 };
 
 export const DEFAULT_SETTINGS: PluginSettings = {
-  serverUrl: "https://ifg.singhinder.com",
+  serverUrl: "https://itg.singhinder.com",
   showConfirmationModal: false
 };
 
-const GITHUB_TOKEN_GUIDE = "https://pluginguide.singhinder.com?g=token";
+const GUIDE_BASE_URL = "https://pluginguide.singhinder.com";
 
-const SERVER_URL_GUIDE = "https://pluginguide.singhinder.com?g=serverurl";
+const GITHUB_TOKEN_GUIDE = `${GUIDE_BASE_URL}?g=token`;
+
+const SERVER_URL_GUIDE = `${GUIDE_BASE_URL}?g=serverurl`;
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
 export default class SettingsTab extends PluginSettingTab {
-  plugin: ImagesFromGist;
+  plugin: ImagesToGist;
 
-  constructor(app: App, plugin: ImagesFromGist) {
+  constructor(app: App, plugin: ImagesToGist) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -33,7 +35,7 @@ export default class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60setHeading%60+instead+of+a+%60%3Ch1%3E%60%2C+%60%3Ch2%3E%60
-    new Setting(containerEl).setName("Images From Gist - Settings").setHeading();
+    new Setting(containerEl).setName("Images To Gist - Settings").setHeading();
 
     const token = this.plugin.getToken();
 
