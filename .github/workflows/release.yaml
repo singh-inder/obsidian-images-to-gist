@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # https://stackoverflow.com/a/76523728/18954618
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v3
