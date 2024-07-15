@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/0.4.0...0.5.0) (2024-07-15)
+
+### ⚠ BREAKING CHANGES
+
+- - remove dotenv dependency
+
+### Features
+
+- update manifest.json, versions.json ([828f83e](https://github.com/singh-inder/obsidian-images-to-gist/commit/828f83eafe5dcdddfae4ba9776efb26b0e766f30))
+- add release workflow ([dc91886](https://github.com/singh-inder/obsidian-images-to-gist/commit/dc91886e6bff5702db3b0cf983ab31d14afd34e3))
+- **SettingsTab:** update urls ([4c01bb8](https://github.com/singh-inder/obsidian-images-to-gist/commit/4c01bb82a4fd99f36571c343859dafab3d905cd5))
+- add parseEnv func ([52c2dba](https://github.com/singh-inder/obsidian-images-to-gist/commit/52c2dba50189c127b9d403ecd2a80fca95c7d0c6))
+
 ## [0.4.0](https://github.com/singh-inder/images-from-gist/compare/0.3.0...0.4.0) (2024-06-26)
 
 ### ⚠ BREAKING CHANGES
