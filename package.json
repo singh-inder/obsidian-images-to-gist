@@ -1,6 +1,6 @@
 {
   "name": "images-to-gist",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Upload images to your GitHub secret Gists. Also, resize uploaded images on the fly.",
   "main": "main.js",
   "author": {
@@ -22,15 +22,15 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.14.9",
-    "@typescript-eslint/eslint-plugin": "7.14.1",
-    "@typescript-eslint/parser": "7.14.1",
+    "@types/node": "^20.14.10",
+    "@typescript-eslint/eslint-plugin": "7.16.1",
+    "@typescript-eslint/parser": "7.16.1",
     "builtin-modules": "4.0.0",
     "commit-and-tag-version": "^12.4.1",
-    "esbuild": "0.21.5",
+    "esbuild": "0.23.0",
     "obsidian": "latest",
-    "prettier": "^3.3.2",
+    "prettier": "^3.3.3",
     "tslib": "2.6.3",
-    "typescript": "5.5.2"
+    "typescript": "5.5.3"
   }
 }
