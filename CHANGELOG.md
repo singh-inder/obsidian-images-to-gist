@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.0.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/0.5.1...1.0.0) (2024-07-16)
+
+### Features
+
+- update deps ([5281400](https://github.com/singh-inder/obsidian-images-to-gist/commit/52814004a3bf276706def6da0fb75e573b107db3))
+
 ## [0.5.1](https://github.com/singh-inder/obsidian-images-to-gist/compare/0.5.0...0.5.1) (2024-07-15)
 
 ### Bug Fixes
