@@ -144,7 +144,9 @@ export default class ImagesToGist extends Plugin {
   }
 
   async saveSettings() {
-    await this.saveData(this.settings);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { githubToken, ...rest } = this.settings;
+    await this.saveData({ ...rest });
   }
 
   private setupHandlers() {
