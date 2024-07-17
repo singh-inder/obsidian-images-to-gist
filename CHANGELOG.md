@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/1.0.0...1.1.0) (2024-07-17)
+
+### Bug Fixes
+
+- prevent saving githubToken in data.json ([1fff5de](https://github.com/singh-inder/obsidian-images-to-gist/commit/1fff5de419432d9f03c7050223cd0cf078be8d7e))
+
 ## [1.0.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/0.5.1...1.0.0) (2024-07-16)
 
 ### Features
