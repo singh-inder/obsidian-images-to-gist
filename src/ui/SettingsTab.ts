@@ -1,5 +1,5 @@
 import type ImagesToGist from "../main";
-import { PluginSettingTab, Setting, type App } from "obsidian";
+import { PluginSettingTab, Setting, normalizePath, type App } from "obsidian";
 
 import { appendAnchorToFragment, appendBrToFragment } from "../lib/utils";
 
@@ -98,7 +98,9 @@ export default class SettingsTab extends PluginSettingTab {
     fragment.append("Token is saved in ");
 
     const strongTag = document.createElement("strong");
-    strongTag.textContent = this.plugin.getAbsolutePath(".env");
+    strongTag.textContent = normalizePath(
+      `${this.app.vault.getName()}/${this.plugin.getPluginPath()}/.env`
+    );
     fragment.append(strongTag);
 
     appendBrToFragment(fragment);

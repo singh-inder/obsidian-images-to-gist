@@ -1,9 +1,7 @@
 import {
   Editor,
-  FileSystemAdapter,
   Notice,
   Plugin,
-  normalizePath,
   MarkdownView,
   type EditorPosition,
   type CanvasView
@@ -66,22 +64,6 @@ export default class ImagesToGist extends Plugin {
 
   getPluginPath() {
     return `${this.app.vault.configDir}/plugins/${this.pluginName}`;
-  }
-
-  // https://forum.obsidian.md/t/how-to-get-current-plugins-directory/26427/2
-  getAbsolutePath(fileName: string) {
-    let basePath;
-
-    if (this.app.vault.adapter instanceof FileSystemAdapter) {
-      basePath = this.app.vault.adapter.getBasePath();
-    } else {
-      throw new Error("Cannot determine base path.");
-    }
-
-    const relativePath = `${this.getPluginPath()}/${fileName}`;
-
-    // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60normalizePath()%60+to+clean+up+user-defined+paths
-    return normalizePath(`${basePath}/${relativePath}`);
   }
 
   getToken() {
