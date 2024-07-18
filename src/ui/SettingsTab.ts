@@ -105,7 +105,7 @@ export default class SettingsTab extends PluginSettingTab {
 
     appendBrToFragment(fragment);
 
-    fragment.append("If you use any sync service, make sure to exclude this file.");
+    fragment.append("Make sure to exclude this file if you use any sync service.");
 
     appendBrToFragment(fragment);
 
