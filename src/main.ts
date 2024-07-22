@@ -88,7 +88,6 @@ export default class ImagesToGist extends Plugin {
     if (!this.getToken()) this.noGithubTokenNotice();
     if (!this.settings.serverUrl) this.noServerUrlNotice();
 
-    // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SettingsTab(this.app, this));
 
     this.setupHandlers();
@@ -204,7 +203,7 @@ export default class ImagesToGist extends Plugin {
 
       const progressText = ImagesToGist.progressTextFor(pasteId);
 
-      const markDownImage = `![](${imgUrl})`;
+      const markDownImage = `![${file.name}](${imgUrl})`;
 
       const editor = this.getEditor();
 
