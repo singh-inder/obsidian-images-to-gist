@@ -1,4 +1,5 @@
 import type { GistPostApiRes } from "src/types";
+import { requestUrl } from "obsidian";
 
 export const appendBrToFragment = (fragment: DocumentFragment) => {
   fragment.append(document.createElement("br"));
@@ -32,45 +33,41 @@ export const removeCommitHash = (url: string) => {
   return `${splitUrl[0]}raw/${fileName}`;
 };
 
-export const createGist = (file: File, token: string): Promise<GistPostApiRes> => {
-  return new Promise((res, rej) => {
-    if (!token) return rej("No Github token");
-
+export const createGist = async (file: File, token: string) => {
+  const base64String = await new Promise<string>((res, rej) => {
     /// https://stackoverflow.com/a/20285053
     const reader = new FileReader();
 
-    reader.onload = async () => {
+    reader.onload = () => {
       const result = reader.result;
 
-      if (!result) {
+      if (!result)
         return rej(new Error(`Unable to convert ${file.name} to base64 string`));
-      }
 
-      const base64String = (
-        typeof result !== "string" ? result.toString() : result
-      ).split(",")[1];
-
-      // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
-      const response = await fetch("https://api.github.com/gists", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28"
-        },
-        body: JSON.stringify({
-          public: false,
-          files: { [file.name]: { content: base64String } }
-        })
-      });
-
-      res((await response.json()) as GistPostApiRes);
+      res((typeof result !== "string" ? result.toString() : result).split(",")[1]);
     };
 
     reader.onerror = e => rej(e);
 
     reader.readAsDataURL(file);
   });
+
+  // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
+  const response = await requestUrl({
+    url: "https://api.github.com/gists",
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    },
+    body: JSON.stringify({
+      public: false,
+      files: { [file.name]: { content: base64String } }
+    })
+  });
+
+  return response.json as GistPostApiRes;
 };
 
 // https://stackoverflow.com/a/43828391

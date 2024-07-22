@@ -34,18 +34,15 @@ export default class SettingsTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    // https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines#Use+%60setHeading%60+instead+of+a+%60%3Ch1%3E%60%2C+%60%3Ch2%3E%60
-    new Setting(containerEl).setName("Images To Gist - Settings").setHeading();
-
     const token = this.plugin.getToken();
 
     new Setting(containerEl)
-      .setName("Github token")
+      .setName("GitHub token")
       .setDesc(this.githubTokenSettingDesc())
       .addText(text => {
         text.inputEl.setAttribute("type", "password");
 
-        text.setPlaceholder("Enter Github token");
+        text.setPlaceholder("Enter GitHub token");
 
         text.setValue(token || "");
 
@@ -111,7 +108,7 @@ export default class SettingsTab extends PluginSettingTab {
 
     appendAnchorToFragment(
       fragment,
-      "Learn how to generate github token",
+      "Learn how to generate GitHub token",
       GITHUB_TOKEN_GUIDE
     );
 

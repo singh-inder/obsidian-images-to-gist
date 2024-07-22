@@ -49,21 +49,19 @@ type ClipboardManager = {
 };
 
 export default class ImagesToGist extends Plugin {
-  // same as in manifest.json
-  pluginName = "images-to-gist";
   githubTokenEnv = "GITHUB_TOKEN" as const;
   settings: PluginSettings;
 
   private noGithubTokenNotice() {
-    new Notice("❌ No Github token", 3 * 1000);
+    new Notice("❌ No GitHub token", 3 * 1000);
   }
 
   private noServerUrlNotice() {
-    new Notice("❌ No Server url", 3 * 1000);
+    new Notice("❌ No server url", 3 * 1000);
   }
 
   getPluginPath() {
-    return `${this.app.vault.configDir}/plugins/${this.pluginName}`;
+    return this.manifest.dir;
   }
 
   getToken() {
