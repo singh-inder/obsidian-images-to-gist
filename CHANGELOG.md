@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.3.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/1.2.1...1.3.0) (2024-07-22)
+
+### Features
+
+- add fileName as image alt text ([424009f](https://github.com/singh-inder/obsidian-images-to-gist/commit/424009fd64bb4d2a708b3df4ae797d9ed6e60e2a))
+- made requested changes ([d836b60](https://github.com/singh-inder/obsidian-images-to-gist/commit/d836b6032c2bc62bf50ffa54e248a01cc73400c2)), closes [/github.com/obsidianmd/obsidian-releases/pull/3898#issuecomment-2243615131](https://github.com/singh-inder//github.com/obsidianmd/obsidian-releases/pull/3898/issues/issuecomment-2243615131)
+
 ## [1.2.1](https://github.com/singh-inder/obsidian-images-to-gist/compare/1.2.0...1.2.1) (2024-07-18)
 
 ### Features
