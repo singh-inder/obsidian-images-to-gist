@@ -6,8 +6,8 @@
     "bump": true
   },
   "scripts": {
-    "precommit": "git add package*.json",
-    "postchangelog": "prettier --write CHANGELOG.md"
+    "precommit": "git add package*.json manifest.json versions.json",
+    "postchangelog": "prettier --write CHANGELOG.md manifest.json versions.json"
   },
   "types": [
     {
