@@ -8,10 +8,10 @@ https://gist.github.com/user-attachments/assets/ed86975d-a315-47f9-97a1-f9b1ba79
 
 ## Features
 
-- Upload your images to GitHub secret Gists as base64 strings instead of storing them locally in your vault.
-- Resize uploaded images on the fly by adding `w` , `h` query params to the url. Watch [demo](#demo) or read [how to resize images](docs/getting_started.md#resize) guide.
-- As images are stored in your GitHub Gists, you can delete them anytime you wish.
-- Upload images by either pasting from the clipboard or by dragging them from the file system. Animated gifs upload support on drag-and-drop.
+- **Upload to GitHub Secret Gists**: Store your images securely in your GitHub account, ensuring privacy and control.
+- **Dynamic Image Resizing**: Resize uploaded images on the fly by adding `w` and `h` query parameters to the URL. Check out the [demo](#demo) or read the [how to resize images](docs/getting_started.md#resize) guide.
+- **Full Control**: As the images are stored in your GitHub secret Gists, you have the ability to delete them at any time.
+- **Flexible Upload Methods**: Easily upload images by pasting from the clipboard or dragging and dropping from your file system. Support for animated GIFs is also available through drag-and-drop.
 
 ## Installation
 
