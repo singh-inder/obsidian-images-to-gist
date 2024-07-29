@@ -9,7 +9,7 @@ https://gist.github.com/user-attachments/assets/ed86975d-a315-47f9-97a1-f9b1ba79
 ## Features
 
 - **Upload to GitHub Secret Gists**: Store your images securely in your GitHub account, ensuring privacy and control.
-- **Dynamic Image Resizing**: Resize uploaded images on the fly by adding `w` and `h` query parameters to the URL. Check out the [demo](#demo) or read the [how to resize images](docs/getting_started.md#resize) guide.
+- **Dynamic Image Resizing**: Resize uploaded images on the fly by adding `w` and `h` query parameters to the URL. Check out the [demo](https://github.com/singh-inder/obsidian-images-to-gist#demo) or read the [how to resize images](https://github.com/singh-inder/obsidian-images-to-gist/blob/main/docs/getting_started.md#resize) guide.
 - **Full Control**: As the images are stored in your GitHub secret Gists, you have the ability to delete them at any time.
 - **Flexible Upload Methods**: Easily upload images by pasting from the clipboard or dragging and dropping from your file system. Support for animated GIFs is also available through drag-and-drop.
 
@@ -23,14 +23,14 @@ Install the plugin via the [Community Plugins](https://help.obsidian.md/Extendin
 
 <!-- Get up & running with [getting started video]() or if you prefer a written version [getting_started.md](/docs/getting_started.md) -->
 
-Get up & running with [getting_started.md](/docs/getting_started.md)
+Get up & running with [getting_started.md](https://github.com/singh-inder/obsidian-images-to-gist/blob/main/docs/getting_started.md)
 
 ## Plugin Settings
 
 <!-- prettier-ignore -->
 | Setting | Description |  |
 |---|---|---|
-| GitHub Token | Personal access token for GitHub to authenticate API requests. Learn [how to generate one](/docs/getting_started.md) | Required |
+| GitHub Token | Personal access token for GitHub to authenticate API requests. Learn [how to generate one](https://github.com/singh-inder/obsidian-images-to-gist/blob/main/docs/getting_started.md) | Required |
 | Image Server URL | Server URL for decoding images uploaded to GitHub gist. You can continue to use the default [Images-to-gist-server](https://github.com/singh-inder/images-to-gist-server) (completely private & free) or provide your own. | Optional |
 | Confirmation Before Upload | Prompt for confirmation before uploading an image. | Default=`false` |
 
