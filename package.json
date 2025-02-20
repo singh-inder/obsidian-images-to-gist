@@ -1,6 +1,6 @@
 {
   "name": "images-to-gist",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Upload images to your GitHub secret Gists.",
   "main": "main.js",
   "author": {

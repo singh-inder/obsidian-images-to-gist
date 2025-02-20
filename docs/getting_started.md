@@ -30,11 +30,14 @@ https://itg.singhinder.com?url=<GIST_URL>
 
 ## Resize
 
-You can simply add `w` and/or `h` query params.
-For example if you want to set image width to 640px and height to 360px:
+You can simply add the uploaded img url in an img tag
+
+For example:
 
 ```
-https://itg.singhinder.com?url=<GIST_URL>&w=640&h=360
+<img
+src="https://itg.singhinder.com?url=<GIST_URL>"
+width=640
+height=360
+>
 ```
-
-To view your original image you can simply remove `w` and `h` query params

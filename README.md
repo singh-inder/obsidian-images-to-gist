@@ -1,6 +1,6 @@
 # Obsidian Images to Gist plugin
 
-This plugin uploads images as base64 strings to your GitHub account's secret Gists instead of storing them locally inside your vault. Also, allows you to resize uploaded images on the fly.
+This plugin uploads images as base64 strings to your GitHub account's secret Gists instead of storing them locally inside your vault.
 
 ## Demo
 
@@ -9,9 +9,21 @@ https://gist.github.com/user-attachments/assets/ed86975d-a315-47f9-97a1-f9b1ba79
 ## Features
 
 - **Upload to GitHub Secret Gists**: Store your images securely in your GitHub account, ensuring privacy and control.
-- **Dynamic Image Resizing**: Resize uploaded images on the fly by adding `w` and `h` query parameters to the URL. Check out the [demo](https://github.com/singh-inder/obsidian-images-to-gist#demo) or read the [how to resize images](https://github.com/singh-inder/obsidian-images-to-gist/blob/main/docs/getting_started.md#resize) guide.
 - **Full Control**: As the images are stored in your GitHub secret Gists, you have the ability to delete them at any time.
 - **Flexible Upload Methods**: Easily upload images by pasting from the clipboard or dragging and dropping from your file system. Support for animated GIFs is also available through drag-and-drop.
+
+### 🚨 Service Discontinuation Notice (Effective March 1, 2025)
+
+The free **Images-to-Gist-Server** service will no longer be available starting **March 1, 2025**. If you're using this plugin, you'll need to **self-host the image server** to continue using it. The server is open-source and MIT licensed, so you can deploy it on your own infrastructure easily.
+
+🔹 **How to Self-Host:** Follow the instructions in the [Images-to-Gist-Server Repository](https://github.com/singh-inder/images-to-gist-server) to deploy your own server.
+
+🔹 **Update Plugin Settings:** Once hosted, update the **Image Server URL** in the plugin settings to point to your self-hosted instance.  
+For details on updating existing images, see the [FAQ](#faq) entry:  
+**"Will I have to manually update image server URL for all existing images if I provide my own image server URL after some time?"**
+
+Since this plugin's release in July 2024, I’ve been covering the server costs myself, but I can no longer afford to keep the free service running.
+Thanks for your understanding and support! 🙌
 
 ## Installation
 
@@ -67,7 +79,7 @@ Your image uploaded to GitHub secret Gists cannot be seen unless you share a lin
 
 <br>
 
-<details>
+<details open>
 <summary>Will I have to manually update image server url for all existing images if I provide my own image server url after some time?</summary>
  
  - No, you won't have to manually update the image server url for all existing images. 
@@ -86,7 +98,7 @@ Your image uploaded to GitHub secret Gists cannot be seen unless you share a lin
 
 ## Acknowledgments
 
-- code for handling image paste, drag & drop functionality is adapted from [obsidian-imgur-plugin](https://github.com/obdevimgur/obsidian-imgur-plugin).
+- code for handling image paste, drag & drop functionality is adapted from [obsidian-imgur-plugin](https://github.com/gavvvr/obsidian-imgur-plugin).
 - hot reloads in dev environment with [hot-reload](https://github.com/pjeby/hot-reload)
 
 ## Support
