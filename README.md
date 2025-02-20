@@ -2,9 +2,7 @@
 
 This plugin uploads images as base64 strings to your GitHub account's secret Gists instead of storing them locally inside your vault.
 
-## Demo
-
-https://gist.github.com/user-attachments/assets/ed86975d-a315-47f9-97a1-f9b1ba7913af
+Checkout the [DEMO](https://imgur.com/a/kWhsXld)
 
 ## Features
 
