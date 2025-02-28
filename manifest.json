@@ -1,7 +1,7 @@
 {
   "id": "images-to-gist",
   "name": "Images to Gist",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "minAppVersion": "1.5.3",
   "description": "Upload images to your GitHub secret Gists.",
   "author": "Inder Singh",

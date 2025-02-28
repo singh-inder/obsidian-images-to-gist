@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.1](https://github.com/singh-inder/obsidian-images-to-gist/compare/1.4.0...1.4.1) (2025-02-28)
+
+### Features
+
+- **SettingsTab:** update guide urls ([9539433](https://github.com/singh-inder/obsidian-images-to-gist/commit/95394330ba02948caa67820f9b67ae0a3b8fa3cc))
+
 ## [1.4.0](https://github.com/singh-inder/obsidian-images-to-gist/compare/1.3.0...1.4.0) (2025-02-20)
 
 ### Features
