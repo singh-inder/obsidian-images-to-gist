@@ -14,11 +14,11 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   showConfirmationModal: false
 };
 
-const GUIDE_BASE_URL = "https://pluginguide.singhinder.com";
+const GUIDE_BASE_URL = "https://github.com/singh-inder/obsidian-images-to-gist";
 
-const GITHUB_TOKEN_GUIDE = `${GUIDE_BASE_URL}?g=token`;
+const GITHUB_TOKEN_GUIDE = `${GUIDE_BASE_URL}/blob/main/docs/getting_started.md`;
 
-const SERVER_URL_GUIDE = `${GUIDE_BASE_URL}?g=serverurl`;
+const SERVER_URL_GUIDE = `${GUIDE_BASE_URL}?tab=readme-ov-file#faq`;
 
 // https://docs.obsidian.md/Plugins/User+interface/Settings
 export default class SettingsTab extends PluginSettingTab {
